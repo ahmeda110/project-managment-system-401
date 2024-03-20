@@ -7,6 +7,7 @@ import { RiAccountBoxFill } from "react-icons/ri";
 import { FaSignOutAlt } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
 
 import "../../assets/styles/Sidebar.css";
 
@@ -17,6 +18,7 @@ function Sidebar({ activeTab, setActiveTab }) {
   };
 
   const navigate = useNavigate();
+  const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
   return (
     <div className="sidebar-container">
@@ -44,9 +46,9 @@ function Sidebar({ activeTab, setActiveTab }) {
         ))}
       </div>
       <div className="sign-out-container">
-        <div className="signout-item">
+        <div className="signout-item" >
           <FaSignOutAlt size={20} />
-          <div>Singout</div>
+          <button onClick={logout}>Signout</button>
         </div>
       </div>
     </div>
