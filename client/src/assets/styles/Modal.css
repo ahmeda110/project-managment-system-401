@@ -14,22 +14,36 @@
 }
 
 .modal-content {
-    background-color: rgb(77, 77, 77);
-    padding: 20px;
-    border-radius: 5px;
-    width: 500px; /* Adjust width as needed */
+    background-color: rgb(40, 40, 40);
+    padding: 3em;
+    border-radius: 30px;
+    width: 500px; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
     position: absolute;
     z-index: 10000;
 }
+.modal-content form {
+    margin-top: 2.5em;
+
+    display: flex;
+    flex-direction: column;
+
+    row-gap: 1em;
+}
+
+.modal-content form > div {
+    display: flex;
+    flex-direction: column;
+}
 
 .modal-content input, textarea {
-    background-color: rgb(200, 200, 200);
+    background-color: rgb(60, 60, 60);
     border-radius: 8px;
     width: 500;
     resize: none;
     border: none;
+    color: lightgray;
 }
 
 .close-button {
@@ -55,16 +69,48 @@
 
 .modal-title {
     font-size: 24px; /* Adjust font size as needed */
-    color: black;
+    color: rgb(255, 255, 255);
 }
 
 
 .modal-form > input, .modal-form > textarea, .modal-form > button {
     display: block;
     width: 100%;
-    margin-top: 10px; /* Adjust spacing as needed */
+    margin-top: 7.5px; /* Adjust spacing as needed */
 }
 
 .modal-form > textarea {
     height: 100px; /* Adjust height as needed */
+}
+
+input, textarea {
+    padding: 1em;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+}
+
+.modal-submit-button {
+    padding: 1em;
+    margin-bottom: -1em;
+
+    font-weight: 600;
+    color: white;
+
+    margin-top: 2em !important;
+}
+
+.modal-cancel-button {
+    padding: 1em;
+    background: lightgray !important;
+    color: black !important;
+}
+
+button {
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+
+    font-size: 14px;
 }
