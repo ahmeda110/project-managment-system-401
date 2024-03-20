@@ -49,6 +49,7 @@
 
     padding: 1em;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .tasks-container .card .title {

@@ -1,0 +1,53 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    backdrop-filter: blur(2px); 
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1000; 
+    background: 'rgba(0, 0, 0, 0.5)'
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 500px; /* Adjust width as needed */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    position: absolute;
+    z-index: 10000;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 24px; /* Adjust font size as needed */
+}
+
+.close-button {
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.modal-form > input, .modal-form > textarea, .modal-form > button {
+    display: block;
+    width: 100%;
+    margin-top: 10px; /* Adjust spacing as needed */
+}
+
+.modal-form > textarea {
+    height: 100px; /* Adjust height as needed */
+}
