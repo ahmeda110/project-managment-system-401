@@ -4,13 +4,13 @@ import Sidebar from '../SideBar/Sidebar';
 
 import "../../assets/styles/Account.css"
 
-function Account() {
+function Account({activeTab, setActiveTab}) {
 
 
     return (
         <>
             <div className='account-container'>
-                <Sidebar  />
+                <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
                 <div className='content-container'>Account</div>
             </div>
             

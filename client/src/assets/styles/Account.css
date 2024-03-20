@@ -4,15 +4,14 @@
     justify-content: space-between;
 
     width: 100%;
-    margin: 1em !important;
     padding: 0;
 }
 
 
 .content-container {
     position: fixed;
-    width: calc(78.5% - 6em);
-    height: calc(100% - 6em);
+    width: calc(79.75% - 6em);
+    height: calc(100% - 5.25em);
     padding: 2em;
 
     margin-left: 21%;

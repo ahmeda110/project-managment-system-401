@@ -10,15 +10,14 @@ import { useNavigate } from "react-router-dom"
 
 import "../../assets/styles/Sidebar.css"
 
-function Sidebar() {
+function Sidebar({activeTab, setActiveTab}) {
     const navigationItems = {
         "All tasks": {icon: <RiHome2Fill size={18} />, link: "/"},
         "Account": {icon: <RiAccountBoxFill size={20} />, link: "/account"}
     }
 
     const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState("All tasks");
-
+    
     return (
         <div className="sidebar-container">
             <div className="sidebar-header">
@@ -28,8 +27,8 @@ function Sidebar() {
             <div className="navigation-items">
                 {Object.keys(navigationItems).map((val) => (
                     <div 
-                        to="/"
-                        className={`navigation-item ${activeTab === val ? 'active' : ''}`}
+                        key={val}
+                        className={`navigation-item ${activeTab == val ? 'active' : ''}`}
                         onClick={() => {setActiveTab(val); navigate(navigationItems[val].link)}}
                     >
                         {navigationItems[val].icon}

@@ -1,6 +1,6 @@
 .sidebar-container {
     position: absolute;
-    height: calc(100% - 6em);
+    height: calc(100% - 5.25em);
 
     padding: 2em 0;
     background: #2b2b2b;
