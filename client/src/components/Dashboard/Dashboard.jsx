@@ -5,9 +5,8 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { MdEditDocument } from "react-icons/md";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 
-
 import "../../assets/styles/Dashboard.css";
-import "../../assets/styles/Modal.css"
+import "../../assets/styles/Modal.css";
 
 function Dashboard() {
   const initialTasks = [
@@ -46,10 +45,9 @@ function Dashboard() {
   const [tasks, setTasks] = useState(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  
+  const [isAddingTask, setIsAddingTask] = useState(false);
 
   const handleStatusChange = (index) => {
-
     const newTasks = tasks.map((task, idx) => {
       if (idx === index) {
         return { ...task, status: !task.status };
@@ -57,25 +55,49 @@ function Dashboard() {
       return task;
     });
 
-    setTasks(newTasks); 
+    setTasks(newTasks);
   };
 
   const handleEditClick = (index) => {
-    setEditingTask({ ...tasks[index], index }); 
-    setIsModalOpen(true); 
+    setEditingTask({ ...tasks[index], index });
+    setIsModalOpen(true);
   };
 
   const handleTaskUpdate = (updatedTask) => {
-    const newTasks = tasks.map((task, idx) =>
+    if (isAddingTask) {
+      // Handle adding a new task
+      setTasks([...tasks, { ...updatedTask, status: false }]);
+    } else {
+      // Handle updating an existing task
+      const newTasks = tasks.map((task, idx) =>
         idx === updatedTask.index ? { ...task, ...updatedTask } : task
-    );
-    setTasks(newTasks);
+      );
+      setTasks(newTasks);
+    }
     closeModal();
+  };
+
+  const handleAddTaskClick = () => {
+    setIsModalOpen(true);
+    setIsAddingTask(true);
+    setEditingTask({
+      title: "",
+      description: "",
+      due: "",
+      status: false,
+      index: tasks.length,
+    });
+  };
+
+  const handleDeleteTask = (index) => {
+    const newTasks = tasks.filter((_, idx) => idx !== index);
+    setTasks(newTasks);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingTask(null);
+    setIsAddingTask(false); // Reset the adding task flag
   };
 
   // Sample useEffect for a POST request, uncomment if needed
@@ -97,7 +119,11 @@ function Dashboard() {
         <div className="content-container">
           <div className="content-header">
             <div className="title">All Tasks</div>
-            <AiFillPlusCircle size={40} style={{ cursor: "pointer" }} />
+            <AiFillPlusCircle
+              size={40}
+              style={{ cursor: "pointer" }}
+              onClick={handleAddTaskClick}
+            />
           </div>
           <div className="tasks-container">
             {tasks.map((task, index) => (
@@ -120,8 +146,14 @@ function Dashboard() {
                       cursor: "pointer",
                     }}
                   >
-                    <MdEditDocument size={26} onClick={() => handleEditClick(index)}/>
-                    <RiDeleteBin2Fill size={26} />
+                    <MdEditDocument
+                      size={26}
+                      onClick={() => handleEditClick(index)}
+                    />
+                    <RiDeleteBin2Fill
+                      size={26}
+                      onClick={() => handleDeleteTask(index)}
+                    />
                   </div>
                 </div>
               </div>
@@ -130,38 +162,75 @@ function Dashboard() {
         </div>
       </div>
 
-      {isModalOpen && <Modal task={editingTask} onUpdate={handleTaskUpdate} onClose={closeModal} />}
+      {isModalOpen && (
+        <Modal
+          task={editingTask}
+          onUpdate={handleTaskUpdate}
+          onClose={closeModal}
+          isAdding={isAddingTask}
+        />
+      )}
     </>
   );
 }
 
-function Modal({ task, onUpdate, onClose }) {
-    const [title, setTitle] = useState(task.title);
-    const [description, setDescription] = useState(task.description);
-    const [due, setDue] = useState(task.due);
+function Modal({ task, onUpdate, onClose, isAdding }) {
+  const [title, setTitle] = useState(task?.title || "");
+  const [description, setDescription] = useState(task?.description || "");
+  const [due, setDue] = useState(task?.due || "");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onUpdate({ ...task, title, description, due });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const taskData = { title, description, due, index: task?.index };
+    onUpdate(taskData);
+  };
 
-    return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <span className="modal-title">Edit Task</span>
-                    <button onClick={onClose} className="close-button">&times;</button>
-                </div>
-                <form onSubmit={handleSubmit} className="modal-form">
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-                    <input type="date" value={due} onChange={(e) => setDue(e.target.value)} />
-                    <button type="submit">Update Task</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
-                </form>
-            </div>
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <span className="modal-title">
+            {isAdding ? "Add Task" : "Edit Task"}
+          </span>
+          <button onClick={onClose} className="close-button">
+            &times;
+          </button>
         </div>
-    );
+        <form onSubmit={handleSubmit} className="modal-form">
+          <label htmlFor="title">Title</label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <label htmlFor="due">Due Date</label>
+          <input
+            id="due"
+            type="date"
+            value={due}
+            onChange={(e) => setDue(e.target.value)}
+          />
+          <button type="submit" className="modal-submit-button">
+            {isAdding ? "Add Task" : "Update Task"}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="modal-cancel-button"
+          >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;
