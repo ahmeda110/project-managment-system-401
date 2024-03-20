@@ -14,7 +14,7 @@
 }
 
 .modal-content {
-    background-color: white;
+    background-color: rgb(77, 77, 77);
     padding: 20px;
     border-radius: 5px;
     width: 500px; /* Adjust width as needed */
@@ -22,6 +22,28 @@
 
     position: absolute;
     z-index: 10000;
+}
+
+.modal-content input, textarea {
+    background-color: rgb(200, 200, 200);
+    border-radius: 8px;
+    width: 500;
+    resize: none;
+    border: none;
+}
+
+.close-button {
+    font-size: 24px;
+    border: none;
+    background-color: transparent !important;
+    cursor: pointer;
+    color: white;
+}
+
+.modal-content button {
+    background-color: #32CD32;
+    border: none;
+    border-radius: 5px;
 }
 
 .modal-header {
@@ -36,12 +58,6 @@
     color: black;
 }
 
-.close-button {
-    font-size: 24px;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
 
 .modal-form > input, .modal-form > textarea, .modal-form > button {
     display: block;
