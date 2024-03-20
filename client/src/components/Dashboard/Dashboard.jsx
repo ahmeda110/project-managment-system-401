@@ -9,7 +9,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
 
-function Dashboard({activeTab, setActiveTab}) {
+function Dashboard({ activeTab, setActiveTab }) {
   const initialTasks = [
     {
       title: "Dentist Appointment",
@@ -124,7 +124,11 @@ function Dashboard({activeTab, setActiveTab}) {
   return (
     <>
       <div className="dashboard-container">
-        <Sidebar className="sidebar-container" activeTab={activeTab} setActiveTab={setActiveTab}/>
+        <Sidebar
+          className="sidebar-container"
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
         <div className="content-container">
           <div className="content-header">
             <div className="title">All Tasks</div>
@@ -148,7 +152,10 @@ function Dashboard({activeTab, setActiveTab}) {
                   <div
                     className="status"
                     style={{ background: task.status ? "limegreen" : "red" }}
-                    onClick={() => handleStatusChange(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusChange(index);
+                    }}
                   >
                     {task.status ? "Completed" : "Incomplete"}
                   </div>
@@ -161,11 +168,17 @@ function Dashboard({activeTab, setActiveTab}) {
                   >
                     <MdEditDocument
                       size={26}
-                      onClick={() => handleEditClick(index)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditClick(index);
+                      }}
                     />
                     <RiDeleteBin2Fill
                       size={26}
-                      onClick={() => handleDeleteTask(index)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(index);
+                      }}
                     />
                   </div>
                 </div>
@@ -186,11 +199,21 @@ function Dashboard({activeTab, setActiveTab}) {
       <div className={`side-menu ${isSideMenuOpen ? "open" : ""}`}>
         {selectedTask && (
           <>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <h2>{selectedTask.title}</h2>
-          <IoIosCloseCircle size={30} onClick={() => setIsSideMenuOpen(false)} style={{ cursor: "pointer" }} />
-          </div>
-            
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h2>{selectedTask.title}</h2>
+              <IoIosCloseCircle
+                size={30}
+                onClick={() => setIsSideMenuOpen(false)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+
             <p>Description: {selectedTask.description}</p>
             <p>Due: {selectedTask.due}</p>
             <p>Status: {selectedTask.status ? "Completed" : "Incomplete"}</p>

@@ -11,8 +11,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard activeTab={activeTab} setActiveTab={setActiveTab} />}></Route>
-        <Route path="/account" element={<Account activeTab={activeTab} setActiveTab={setActiveTab} />}></Route>
+        <Route
+          path="/"
+          element={
+            <Dashboard activeTab={activeTab} setActiveTab={setActiveTab} />
+          }
+        ></Route>
+        <Route
+          path="/account"
+          element={
+            <Account activeTab={activeTab} setActiveTab={setActiveTab} />
+          }
+        ></Route>
       </Routes>
     </BrowserRouter>
   );
