@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import ProfilePic from "../../assets/images/profile.jpeg";
 
@@ -18,16 +18,27 @@ function Sidebar({ activeTab, setActiveTab }) {
   };
 
   const navigate = useNavigate();
-  const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, logout } = useAuth0();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name);
+      localStorage.setItem('userName', user.name);
+    } else {
+      const storedName = localStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+      }
+    }
+  }, [user]);
 
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <img src={ProfilePic} />
+        <img src={ProfilePic} alt="Profile" />
         <div className="profile-name">
-          Ahmed
-          <br />
-          Abbas
+          {userName || "Loading..."}
         </div>
       </div>
       <div className="navigation-items">
@@ -46,7 +57,7 @@ function Sidebar({ activeTab, setActiveTab }) {
         ))}
       </div>
       <div className="sign-out-container">
-        <div className="signout-item" >
+        <div className="signout-item">
           <FaSignOutAlt size={20} />
           <button onClick={logout}>Signout</button>
         </div>

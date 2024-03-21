@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useNavigate } from 'react-router-dom'; // Import useHistory
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
-    const navigate = useNavigate(); // Get history object from react-router
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isAuthenticated) {
