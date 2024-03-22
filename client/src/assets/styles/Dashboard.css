@@ -33,6 +33,22 @@
   border-bottom: 2px solid rgb(0, 255, 0);
 }
 
+.projects-container {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1em;
+  column-gap: 1em;
+  margin-top: 2em;
+}
+
+.projects-container .card .title {
+  font-size: 20px;
+}
+
+.projects-container .card .description {
+  font-size: 12px;
+}
+
 .tasks-container {
   display: flex;
   flex-wrap: wrap;
@@ -41,7 +57,16 @@
   margin-top: 2em;
 }
 
-.tasks-container .card {
+.projects-container .card{
+  width: calc(100% * (1 / 4));
+  background: rgb(70, 70, 70);
+
+  padding: 1em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tasks-container .card{
   width: calc(100% * (1 / 4));
   background: rgb(70, 70, 70);
 

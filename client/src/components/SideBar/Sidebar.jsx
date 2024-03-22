@@ -12,7 +12,8 @@ import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab }) {
   const navigationItems = {
-    "All tasks": { icon: <RiHome2Fill size={18} />, link: "/" },
+    "Projects": { icon: <RiHome2Fill size={18} />, link: "/"},
+    "All tasks": { icon: <RiHome2Fill size={18} />, link: "/:projectName" },
     Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
   };
 
@@ -35,7 +36,12 @@ function Sidebar({ activeTab, setActiveTab }) {
             className={`navigation-item ${activeTab == val ? "active" : ""}`}
             onClick={() => {
               setActiveTab(val);
-              navigate(navigationItems[val].link);
+              if(val === "All tasks") {
+                // Navigate to the dynamic project route
+                navigate(navigationItems[val].link.replace(":projectName", "your_project_name")); // change your_project_name to dynamic variables
+              } else {
+                navigate(navigationItems[val].link);
+              }
             }}
           >
             {navigationItems[val].icon}
