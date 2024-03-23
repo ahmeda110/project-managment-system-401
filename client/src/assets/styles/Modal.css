@@ -47,6 +47,16 @@ textarea {
   color: lightgray;
 }
 
+.modal-content select {
+  background-color: rgb(60, 60, 60);
+  border-radius: 8px;
+  width: 500;
+  height: 40px;
+  resize: none;
+  border: none;
+  color: lightgray;
+}
+
 .close-button {
   font-size: 24px;
   border: none;

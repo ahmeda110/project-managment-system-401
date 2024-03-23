@@ -228,10 +228,17 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [due, setDue] = useState(task?.due || "");
+  const [assignedTo, setAssignedTo] = useState(task?.assignedTo || null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const taskData = { title, description, due, index: task?.index };
+    const taskData = {
+      title,
+      description,
+      due,
+      index: task?.index,
+      assignedTo,
+    };
     onUpdate(taskData);
   };
 
@@ -273,6 +280,10 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
               onChange={(e) => setDue(e.target.value)}
             />
           </div>
+          <div>
+            <label htmlFor="assignedTo">Assigned To</label>
+            <AssignSelect task={task} setAssignedTo={setAssignedTo} />
+          </div>
 
           <button type="submit" className="modal-submit-button">
             {isAdding ? "Add Task" : "Update Task"}
@@ -289,5 +300,46 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
     </div>
   );
 }
+
+const AssignSelect = ({ task, setAssignedTo }) => {
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // will replace with actual API call
+    setTeamMembers([
+      { id: 0, name: "Not assigned" }, // will always add this to result of api call
+      { id: 1, name: "John Doe" },
+      { id: 2, name: "Jane Doe" },
+      { id: 3, name: "John Smith" },
+    ]);
+    // will need to get this from state once that's set up
+    setUser({ id: 1, name: "John Doe", role: "leader" });
+  }, []);
+
+  useEffect(() => {
+    if (user != null && (user.role === "leader" || user.role === "admin")) {
+      setOptions(teamMembers);
+    } else {
+      setOptions(teamMembers.filter((member) => member.id === user.id));
+    }
+  }, [user, teamMembers]);
+
+  return (
+    <>
+      <select
+        value={task.assignedTo}
+        onChange={(e) => setAssignedTo(e.target.value)}
+      >
+        {options.map((member) => (
+          <option key={member.id} value={member.id}>
+            {member.name}
+          </option>
+        ))}
+      </select>
+    </>
+  );
+};
 
 export default Dashboard;
