@@ -12,11 +12,13 @@ function Overview({ activeTab, setActiveTab }) {
             title: "PROJECT",
             description: "Work to be done by a team",
             mem_ids: ["id1", "id2"],
+            index: 0,
         },
         {
             title: "Pool Party",
             description: "Have fun under the sun",
             mem_ids: ["id1","id3"],
+            index: 1,
         },
     ];
     
@@ -72,29 +74,29 @@ function Overview({ activeTab, setActiveTab }) {
             setActiveTab={setActiveTab}
             />
             <div className="content-container">
-            <div className="content-header">
-                <div className="title">Projects</div>
-                <AiFillPlusCircle
-                size={40}
-                style={{ cursor: "pointer" }}
-                onClick={handleAddProjectClick}
-                />
-            </div>
-            <div className="projects-container">
-                {projects.map((project, index) => (
-                <div
-                    className="card"
-                    key={index}
-                    onClick={() => handleProjectClick(project)}
-                >
-                    <div className="title">{project.title}</div>
-                    <div className="description">{project.description}</div>
-                    <div className="card-action-section">
-                    
-                    </div>
+                <div className="content-header">
+                    <div className="title">Projects</div>
+                    <AiFillPlusCircle
+                    size={40}
+                    style={{ cursor: "pointer" }}
+                    onClick={handleAddProjectClick}
+                    />
                 </div>
-                ))}
-            </div>
+                <div className="projects-container">
+                    {projects.map((project, index) => (
+                    <div
+                        className="card"
+                        key={index}
+                        onClick={() => handleProjectClick(project)}
+                    >
+                        <div className="title">{project.title}</div>
+                        <div className="description">{project.description}</div>
+                        <div className="card-action-section">
+                        
+                        </div>
+                    </div>
+                    ))}
+                </div>
             </div>
         </div>
 
@@ -106,10 +108,34 @@ function Overview({ activeTab, setActiveTab }) {
             isAdding={isAddingProject}
             />
         )}
+        <div className={`side-menu ${isSideMenuOpen ? "open" : ""}`}>
+        {selectedProject && (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h2>{selectedProject.title}</h2>
+              <IoIosCloseCircle
+                size={30}
+                onClick={() => setIsSideMenuOpen(false)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+
+            <p>Description: {selectedProject.description}</p>
+            {/* <p>Members: {selectedProject.members}</p> */}
+            
+          </>
+        )}
+      </div>
     </>
     );
 
-    function Modal({ project, onUpdate, onClose, isAdding }) {
+    function Modal({ project, onUpdate, onClose, isAdding}) {
         const [title, setTitle] = useState(project?.title || "");
         const [description, setDescription] = useState(project?.description || "");
         const [members, setMembers] = useState(project?.members || []);
@@ -151,15 +177,6 @@ function Overview({ activeTab, setActiveTab }) {
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="due">Due Date</label>
-                  <input
-                    id="due"
-                    type="date"
-                    value={due}
-                    onChange={(e) => setDue(e.target.value)}
                   />
                 </div>
       
