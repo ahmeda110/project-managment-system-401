@@ -4,6 +4,9 @@ const Tasks = require('./Tasks');
 const Projects = require('./Projects');
 const TasksByProject = require('./getTasksByProject');
 const projects = new Projects(); // Create an instance of the Projects class
+const Members = require('./Members');
+
+
 
 const PORT = 3100;
 
@@ -13,6 +16,8 @@ app.use(cors());
 
 const tasks = new Tasks(); // Create an instance of the Tasks class
 const tasksByProject = new TasksByProject();
+const members = new Members(); // Create an instance of the Members class
+
 
 // Route to create a task -- DONE
 app.post('/api/tasks', async (req, res) => {
@@ -129,6 +134,75 @@ app.get('/api/tasks/member/:memberId', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+
+
+// Route to create a member
+app.post('/api/members', async (req, res) => {
+    try {
+        const { email, name, phone_number, permission } = req.body;
+        const newMember = await members.createMember(email, name, phone_number, permission);
+        res.json(newMember);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get all members
+app.get('/api/members', async (req, res) => {
+    try {
+        const allMembers = await members.getMembers();
+        res.json(allMembers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to update a member
+app.put('/api/members/:id', async (req, res) => {
+    try {
+        const memberId = req.params.id;
+        const updates = req.body;
+        const updatedMember = await members.updateMember(memberId, updates);
+        res.json(updatedMember);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to delete a member
+app.delete('/api/members/:id', async (req, res) => {
+    try {
+        const memberId = req.params.id;
+        const deletedMember = await members.deleteMember(memberId);
+        res.json(deletedMember);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get member details by ID
+app.get('/api/members/:id', async (req, res) => {
+    try {
+        const memberId = req.params.id;
+        const memberDetails = await members.getMemberById(memberId);
+        res.json(memberDetails);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get member name by ID
+app.get('/api/members/:id/name', async (req, res) => {
+    try {
+        const memberId = req.params.id;
+        const memberName = await members.getMemberNameById(memberId);
+        res.json({ name: memberName });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
