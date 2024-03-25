@@ -98,3 +98,39 @@
 .side-menu.open {
   right: 0;
 }
+
+.assignedTo-Title-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center !important;
+  margin: 0;
+}
+
+.assignedTo-Title-div .assigned-to {
+  background: lightgray;
+  width: 4em;
+  padding: .15em 1em;
+  border-radius: 25px;
+
+  color: rgb(70, 70, 70);
+  font-weight: bold;
+  text-align: center;
+  font-size: 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: .25em;
+}
+
+.assigned-to-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background-color: rgb(70, 70, 70);
+  border-radius: 50%;
+}

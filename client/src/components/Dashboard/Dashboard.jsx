@@ -154,14 +154,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   key={index}
                   onClick={() => handleTaskClick(task)}
                 >
-                  <div className="title">{task.name || task.title}</div>
-                  <div className="description">{task.description}</div>
-                  <div className="date">{task.due_date || task.due}</div>
-                  <div className="priority">{task.priority}</div>{" "}
+                  <div className="assignedTo-Title-div">
+                    <div className="title">{task.name || task.title}</div>
+                    <div className="assigned-to-container">
+                      
+                      <div className="assigned-to">
+                        <div className="dot"></div>
+                        {task.assigned_to || task.assignedTo}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="description"><span style={{ color: "#7f7f7f"}}>{task.description}</span></div>
+                  <div className="date"><span style={{fontWeight: "bold"}}>Due Date: </span> {task.due_date || task.due}</div>
                   {/* Display priority */}
-                  <div className="assigned-to">{task.assigned_to}</div>{" "}
+                  
                   {/* Display assigned to */}
                   <div className="card-action-section">
+                    <div style={{display: "flex", alignItems: "center", columnGap: ".5em"}}>
                     <div
                       className="status"
                       style={{ background: task.status ? "limegreen" : "red" }}
@@ -172,6 +181,9 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     >
                       {task.status ? "Completed" : "Incomplete"}
                     </div>
+                      <div className="status" style={{background: "#fbff00", color: "black", fontWeight: "bold"}}>Priority - {task.priority}</div>
+                    </div>
+                    
                     <div
                       style={{
                         display: "flex",
