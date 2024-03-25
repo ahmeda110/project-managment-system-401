@@ -6,15 +6,14 @@ class Tasks {
         this.client = this.supabaseConnector.getSupabaseClient();
     }
 
-    async createTask(name, description, date) {
+    async createTask(status, name, description, priority, assigned_to, due_date, estimated_time) {
         try {
             const { data, error } = await this.client
                 .from('task')
-                .insert({ name, description, date, complete: false })
+                .insert({ status, name, description, priority, assigned_to, due_date, estimated_time })
                 .single();
             if (error) throw error;
-            // if (!data) throw new Error("Failed to create task");
-            // return data;
+            return data;
         } catch (error) {
             console.error(error);
             throw error;
@@ -50,12 +49,12 @@ class Tasks {
         }
     }
 
-    async deleteTask(id) {
+    async deleteTask(taskId) {
         try {
             const { data, error } = await this.client
                 .from('task')
                 .delete()
-                .match({ id })
+                .match({ task_id: taskId }) // Use task_id as the column name
                 .single();
             if (error) throw error;
             return data;
@@ -64,6 +63,7 @@ class Tasks {
             throw error;
         }
     }
+    
 }
 
 module.exports = Tasks;
