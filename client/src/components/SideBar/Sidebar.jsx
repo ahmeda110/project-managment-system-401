@@ -13,7 +13,7 @@ import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab }) {
   const navigationItems = {
-    "All projects": { icon: <RiHome2Fill size={18} />, link: "/" },
+    "All projects": { icon: <RiHome2Fill size={18} />, link: "/projects" },
     "My Tasks": { icon: <RiHome2Fill size={18} />, link: "/my-tasks" },
     Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
   };
