@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import ProfilePic from "../../assets/images/profile.jpeg";
 import { RiHome2Fill } from "react-icons/ri";
 import { RiAccountBoxFill } from "react-icons/ri";
 import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
+
 import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const navigationItems = {
     "All projects": {
       icon: <RiHome2Fill size={18} />,
-      link: "/",
+      link: "/projects",
       subcategories: {
         "My Tasks": { icon: <RiHome2Fill size={18} />, link: "/my-tasks" },
         "Test": { icon: <RiHome2Fill size={18} />, link: "/test" },
@@ -36,15 +39,27 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setActiveSubTab(subItemName);
     navigate(subItemLink);
   };
+  const { user, isAuthenticated, logout } = useAuth0();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name);
+      localStorage.setItem('userName', user.name);
+    } else {
+      const storedName = localStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+      }
+    }
+  }, [user]);
 
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
         <img src={ProfilePic} alt="Profile" />
         <div className="profile-name">
-          Ahmed
-          <br />
-          Abbas
+          {userName || "Loading..."}
         </div>
       </div>
       <div className="navigation-items">
@@ -88,7 +103,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       <div className="sign-out-container">
         <div className="signout-item">
           <FaSignOutAlt size={20} />
-          <div>Signout</div>
+          <button onClick={logout}>Signout</button>
         </div>
       </div>
     </div>
