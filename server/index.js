@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const Tasks = require('./Tasks');
 const Projects = require('./Projects');
-const TasksByProject = require('./TasksByProject');
+const TasksByProject = require('./getTasksByProject');
 const projects = new Projects(); // Create an instance of the Projects class
 
 const PORT = 3100;

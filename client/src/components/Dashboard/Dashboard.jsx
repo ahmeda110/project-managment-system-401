@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import Sidebar from "../SideBar/Sidebar";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { MdEditDocument } from "react-icons/md";
@@ -10,6 +11,8 @@ import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
 
 function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
+  const { id } = useParams();
+
   const getAllTasks = () => {
     axios
       .get("http://localhost:3100/api/tasks")
@@ -20,9 +23,26 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       .catch((err) => console.error(err));
   };
 
+  const getTaskByProject = () => {
+    axios
+      .get(`http://localhost:3100/api/tasks/project/${id}`)
+      .then((result) => {
+        setInitialTasks(result.data);
+        console.log(result.data);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const isNumber = !isNaN("2");
+
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
-    getAllTasks();
+    if(!isNaN(id)) {
+        getTaskByProject();
+    } else {
+        getAllTasks();
+    }
+    
   }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);

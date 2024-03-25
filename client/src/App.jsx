@@ -34,7 +34,7 @@ function App() {
             }
           ></Route>
           <Route
-            path="/my-tasks"
+            path="/tasks/:id"
             element={
               <Dashboard activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
             }

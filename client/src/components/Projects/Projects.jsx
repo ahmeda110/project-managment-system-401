@@ -15,24 +15,7 @@ import "../../assets/styles/Modal.css";
 const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
   const [projectClicked, setProjectClicked] = useState(false);
 
-  const intialProjects = [
-    {
-      id: 1,
-      title: "Project 1",
-      description: "This is the first project",
-    },
-    {
-      id: 2,
-      title: "Project 2",
-      description: "This is the second project",
-    },
-    {
-      id: 3,
-      title: "Project 3",
-      description: "This is the third project",
-    },
-  ];
-  const [initialProjects, setinitialProjects] = useState([])
+  const [intialProjects, setinitialProjects] = useState([])
     useEffect(() => {
         axios.get("http://localhost:3100/api/projects")
             .then(result => {
@@ -44,31 +27,39 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
 
 
   const navigate = useNavigate();
-  const [projects, setProjects] = useState(intialProjects);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [isAddingProject, setIsAddingProject] = useState(false);
 
   const handleProjectUpdate = (updatedProject) => {
     if (isAddingProject) {
-      setProjects([...projects, updatedProject]);
+      setinitialProjects([...intialProjects, updatedProject]);
     } else {
-      const newProjects = projects.map(project =>
+      const newProjects = intialProjects.map(project =>
         project.id === updatedProject.id ? updatedProject : project
       );
-      setProjects(newProjects);
+      setinitialProjects(newProjects);
     }
     closeModal();
   };
 
   const handleProjectClick = (project) => {
-    navigate("/project"); // in the end this will go to a page just for a project
+    console.log(project)
+    navigate(`/tasks/${project.project_id}`);
   };
 
   const handleAddProjectClick = () => {
     setIsModalOpen(true);
     setIsAddingProject(true);
-    setEditingProject({ id: projects.length + 1, title: "", description: "" });
+    const newProject = { id: intialProjects.length + 1, title, description };
+    setinitialProjects([...intialProjects, newProject]);
+    setEditingProject(newProject);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingProject(null);
+    setIsAddingProject(false); // Reset the adding task flag
   };
 
   return (
@@ -88,13 +79,13 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
             />
           </div>
           <div className="tasks-container">
-            {initialProjects.map((project, index) => (
+            {intialProjects && intialProjects.map((project, index) => (
               <div
                 className="card"
                 key={index}
                 onClick={() => handleProjectClick(project)}
               >
-                <div className="title">{project.name}</div>
+                <div className="title">{project.name || project.title}</div>
                 <div className="description">{project.description}</div>
               </div>
             ))}
