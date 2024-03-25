@@ -100,9 +100,9 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         ))}
       </div>
       <div className="sign-out-container">
-        <div className="signout-item">
+        <div className="signout-item" onClick={logout}>
           <FaSignOutAlt size={20} />
-          <button onClick={logout}>Signout</button>
+          <span className="signout-text">Signout</span>
         </div>
       </div>
     </div>

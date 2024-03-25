@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { Suspense } from 'react';
+import { FaSignInAlt } from 'react-icons/fa';
+import '../../assets/styles/Login.css';
 
-function Login() {
-    const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+function Homepage() {
+    const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -13,27 +16,30 @@ function Login() {
     }, [isAuthenticated, navigate]);
 
     return (
-        <div className="Login">
-            <h1>Auth0 authentication</h1>
-            <ul>
-                <li>
-                    <button onClick={loginWithPopup}>Login with Popup</button>
-                </li>
-                <li>
-                    <button onClick={loginWithRedirect}>Login with Redirect</button>
-                </li>
-                <li>
-                    <button onClick={logout}>Logout</button>
-                </li>
-            </ul>
-            <h3>User is {isAuthenticated ? 'Logged in' : 'Not logged in'}</h3>
-            {isAuthenticated && (
-                <pre style={{ textAlign: 'start'}}>
-                    {JSON.stringify(user, null, 2)}
-                </pre>
+        <Suspense fallback={<div>Loading...</div>}>
+            {!isLoading && (
+                <div className="homepage">
+                    {isAuthenticated ? (
+                        <div>
+                            Loading...
+                        </div>
+                    ) : (
+                        <div className="login-section">
+                            <header>
+                                <h1>Welcome to Project Manager</h1>
+                            </header>
+                            <main>
+                                <div className="login-item" onClick={loginWithRedirect}>
+                                    <FaSignInAlt size={20} />
+                                    <span className="login-text">Login</span>
+                                </div>
+                            </main>
+                        </div>
+                    )}
+                </div>
             )}
-        </div>
+        </Suspense>
     );
-};
+}
 
-export default Login;
+export default Homepage;
