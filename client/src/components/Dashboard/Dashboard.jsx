@@ -9,44 +9,64 @@ import { IoIosCloseCircle } from "react-icons/io";
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
 
-function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setActiveSubTab }) {
+function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
+  const getAllTasks = () => {
+    axios
+      .get("http://localhost:3100/api/tasks")
+      .then((result) => {
+        setInitialTasks(result.data);
+        console.log(result.data);
+      })
+      .catch((err) => console.error(err));
+  };
 
+  const [initialTasks, setInitialTasks] = useState([]);
+  useEffect(() => {
+    getAllTasks();
+  }, []);
 
-  const [tasks, setTasks] = useState(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
+  const [editingTask, setEditingTask] = useState({
+    title: "",
+    description: "",
+    due: "",
+    status: false,
+    priority: "", // New state variable for priority
+    assignedTo: "", // New state variable for assigned to
+  });
   const [isAddingTask, setIsAddingTask] = useState(false);
 
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
   const handleStatusChange = (index) => {
-    const newTasks = tasks.map((task, idx) => {
+    const newTasks = initialTasks.map((task, idx) => {
       if (idx === index) {
         return { ...task, status: !task.status };
       }
       return task;
     });
 
-    setTasks(newTasks);
+    setInitialTasks(newTasks);
   };
 
   const handleEditClick = (index) => {
-    setEditingTask({ ...tasks[index], index });
+    setEditingTask({ ...initialTasks[index], index });
     setIsModalOpen(true);
   };
 
   const handleTaskUpdate = (updatedTask) => {
     if (isAddingTask) {
       // Handle adding a new task
-      setTasks([...tasks, { ...updatedTask, status: false }]);
+      setInitialTasks([...initialTasks, { ...updatedTask, status: false }]);
     } else {
       // Handle updating an existing task
-      const newTasks = tasks.map((task, idx) =>
+      const newTasks = initialTasks.map((task, idx) =>
         idx === updatedTask.index ? { ...task, ...updatedTask } : task
       );
-      setTasks(newTasks);
+      setInitialTasks(newTasks);
     }
+
     closeModal();
   };
 
@@ -58,13 +78,22 @@ function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setAct
       description: "",
       due: "",
       status: false,
-      index: tasks.length,
+      priority: "", // Initialize priority
+      assignedTo: "", // Initialize assigned to
+      index: initialTasks.length,
     });
   };
 
-  const handleDeleteTask = (index) => {
-    const newTasks = tasks.filter((_, idx) => idx !== index);
-    setTasks(newTasks);
+  const handleDeleteTask = (index, id) => {
+    const newTasks = initialTasks.filter((_, idx) => idx !== index);
+    setInitialTasks(newTasks);
+
+    axios
+      .delete(`http://localhost:3100/api/tasks/${id}`)
+      .then((result) => {
+        console.log(result.data);
+      })
+      .catch((err) => console.error(err));
   };
 
   const closeModal = () => {
@@ -78,24 +107,15 @@ function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setAct
     setIsSideMenuOpen(true);
   };
 
-  // Sample useEffect for a POST request, uncomment if needed
-  /*
-    useEffect(() => {
-        axios.post("http://localhost:3100/api/dashboard", {})
-            .then(result => {
-                console.log(result);
-                // setDisplayTest(result.data); // Example of how to update state
-            })
-            .catch(err => console.error(err));
-    }, []);
-    */
-
   return (
     <>
       <div className="dashboard-container">
         <Sidebar
           className="sidebar-container"
-          activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab}
+          activeTab={activeTab}
+          activeSubTab={activeSubTab}
+          setActiveTab={setActiveTab}
+          setActiveSubTab={setActiveSubTab}
         />
         <div className="content-container">
           <div className="content-header">
@@ -107,51 +127,56 @@ function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setAct
             />
           </div>
           <div className="tasks-container">
-            {tasks.map((task, index) => (
-              <div
-                className="card"
-                key={index}
-                onClick={() => handleTaskClick(task)}
-              >
-                <div className="title">{task.title}</div>
-                <div className="description">{task.description}</div>
-                <div className="date">{task.due}</div>
-                <div className="card-action-section">
-                  <div
-                    className="status"
-                    style={{ background: task.status ? "limegreen" : "red" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStatusChange(index);
-                    }}
-                  >
-                    {task.status ? "Completed" : "Incomplete"}
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      columnGap: ".5em",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <MdEditDocument
-                      size={26}
+            {initialTasks &&
+              initialTasks.map((task, index) => (
+                <div
+                  className="card"
+                  key={index}
+                  onClick={() => handleTaskClick(task)}
+                >
+                  <div className="title">{task.name || task.title}</div>
+                  <div className="description">{task.description}</div>
+                  <div className="date">{task.due_date || task.due}</div>
+                  <div className="priority">{task.priority}</div>{" "}
+                  {/* Display priority */}
+                  <div className="assigned-to">{task.assigned_to}</div>{" "}
+                  {/* Display assigned to */}
+                  <div className="card-action-section">
+                    <div
+                      className="status"
+                      style={{ background: task.status ? "limegreen" : "red" }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleEditClick(index);
+                        handleStatusChange(index);
                       }}
-                    />
-                    <RiDeleteBin2Fill
-                      size={26}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTask(index);
+                    >
+                      {task.status ? "Completed" : "Incomplete"}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        columnGap: ".5em",
+                        cursor: "pointer",
                       }}
-                    />
+                    >
+                      <MdEditDocument
+                        size={26}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(index);
+                        }}
+                      />
+                      <RiDeleteBin2Fill
+                        size={26}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTask(index, task.task_id);
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -181,10 +206,11 @@ function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setAct
                 style={{ cursor: "pointer" }}
               />
             </div>
-
             <p>Description: {selectedTask.description}</p>
             <p>Due: {selectedTask.due}</p>
             <p>Status: {selectedTask.status ? "Completed" : "Incomplete"}</p>
+            <p>Priority: {selectedTask.priority}</p> {/* Display priority */}
+            <p>Assigned To: {selectedTask.assignedTo}</p>{" "}
           </>
         )}
       </div>
@@ -196,11 +222,35 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [due, setDue] = useState(task?.due || "");
+  const [priority, setPriority] = useState(task?.priority || ""); // State for priority
+  const [assignedTo, setAssignedTo] = useState(task?.assignedTo || ""); // State for assigned to
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const taskData = { title, description, due, index: task?.index };
+    const taskData = {
+      title,
+      description,
+      due,
+      priority,
+      assignedTo,
+      index: task?.index,
+    };
     onUpdate(taskData);
+
+    axios
+      .post("http://localhost:3100/api/tasks", {
+        name: title,
+        description: description,
+        due_date: due,
+        status,
+        priority,
+        assigned_to: assignedTo,
+        estimated_time: 3,
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -240,6 +290,35 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
               value={due}
               onChange={(e) => setDue(e.target.value)}
             />
+          </div>
+          <div>
+            <label htmlFor="priority">Priority</label> {/* Priority dropdown */}
+            <select
+              id="priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              <option value="">Select Priority</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="assignedTo">Assigned To</label>{" "}
+            {/* Assigned to dropdown */}
+            <select
+              id="assignedTo"
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+            >
+              <option value="">Select Assignee</option>
+              <option value="1">John Doe</option>
+              <option value="2">Jane Smith</option>
+              <option value="3">David Johnson</option>
+            </select>
           </div>
 
           <button type="submit" className="modal-submit-button">

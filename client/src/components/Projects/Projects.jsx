@@ -32,85 +32,23 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
       description: "This is the third project",
     },
   ];
+  const [initialProjects, setinitialProjects] = useState([])
+    useEffect(() => {
+        axios.get("http://localhost:3100/api/projects")
+            .then(result => {
+              setinitialProjects(result.data);
+              console.log(result.data)
+            })
+            .catch(err => console.error(err));
+    }, []);
 
-  const initialTasks = [
-    {
-      title: "Dentist Appointment",
-      description: "Schedule a 6-month check-up with the dentist",
-      due: "2025-10-25",
-      status: true,
-      project: 1
-    },
-    {
-      title: "Grocery Shopping",
-      description: "Buy groceries for the week",
-      due: "2025-10-26",
-      status: false,
-      project: 1
-    },
-    {
-      title: "Car Service",
-      description: "Take the car for its annual service",
-      due: "2025-11-01",
-      status: true,
-      project: 1
-    },
-    {
-      title: "Book Club",
-      description: "Prepare for the next book club meeting",
-      due: "2025-11-05",
-      status: false,
-      project: 1
-    },
-    {
-      title: "Renew Gym Membership",
-      description: "Renew the annual gym membership",
-      due: "2025-11-10",
-      status: true,
-      project: 2
-    },
-  ];
+
   const navigate = useNavigate();
   const [projects, setProjects] = useState(intialProjects);
 
   const handleProjectClick = (project) => {
-    setProjectClicked(true);
-    //navigate("/project"); // in the end this will go to a page just for a project
+    navigate("/project"); // in the end this will go to a page just for a project
   };
-
-  const getAlltasksByProjectID = (id) => {
-
-    return [
-      {
-        title: "Dentist Appointment",
-        description: "Schedule a 6-month check-up with the dentist",
-        due: "2025-10-25",
-        status: true,
-        project: 1
-      },
-      {
-        title: "Grocery Shopping",
-        description: "Buy groceries for the week",
-        due: "2025-10-26",
-        status: false,
-        project: 1
-      },
-      {
-        title: "Car Service",
-        description: "Take the car for its annual service",
-        due: "2025-11-01",
-        status: true,
-        project: 1
-      },
-      {
-        title: "Book Club",
-        description: "Prepare for the next book club meeting",
-        due: "2025-11-05",
-        status: false,
-        project: 1
-      },
-    ];
-  }
 
   const handleAddProjectClick = () => {
     // will need modal for new project and stuff
@@ -133,21 +71,18 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
             />
           </div>
           <div className="tasks-container">
-            {projects.map((project, index) => (
+            {initialProjects.map((project, index) => (
               <div
                 className="card"
                 key={index}
                 onClick={() => handleProjectClick(project)}
               >
-                <div className="title">{project.title}</div>
+                <div className="title">{project.name}</div>
                 <div className="description">{project.description}</div>
               </div>
             ))}
           </div>
         </div>
-        {projectClicked &&
-          <Dashboard initialTasks={initialTasks} activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
-        }
       </div>
     </>
   );

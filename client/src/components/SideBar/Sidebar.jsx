@@ -11,12 +11,11 @@ import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const navigationItems = {
-    "All projects": {
+    "All Projects": {
       icon: <RiHome2Fill size={18} />,
       link: "/projects",
       subcategories: {
         "My Tasks": { icon: <RiHome2Fill size={18} />, link: "/my-tasks" },
-        "Test": { icon: <RiHome2Fill size={18} />, link: "/test" },
       },
     },
     Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
@@ -26,7 +25,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const [openCategory, setOpenCategory] = useState(null);
 
   const handleItemClick = (itemName, itemLink) => {
-    if (itemName === "All projects" && openCategory !== itemName) {
+    if (itemName === "All Projects" && openCategory !== itemName) {
       setOpenCategory(itemName);
     } else {
       setOpenCategory(null);
