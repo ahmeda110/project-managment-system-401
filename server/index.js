@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const Tasks = require('./Tasks');
 const Projects = require('./Projects');
+const TasksByProject = require('./TasksByProject');
 const projects = new Projects(); // Create an instance of the Projects class
 
 const PORT = 3100;
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 const tasks = new Tasks(); // Create an instance of the Tasks class
+const tasksByProject = new TasksByProject();
 
 // Route to create a task -- DONE
 app.post('/api/tasks', async (req, res) => {
@@ -101,6 +103,28 @@ app.delete('/api/projects/:id', async (req, res) => {
         const projectId = req.params.id;
         const deletedProject = await projects.deleteProject(projectId);
         res.json(deletedProject);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get tasks by project
+app.get('/api/tasks/project/:projectId', async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const tasks = await tasksByProject.getTasksByProject(projectId);
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get tasks by member
+app.get('/api/tasks/member/:memberId', async (req, res) => {
+    try {
+        const memberId = req.params.memberId;
+        const tasks = await tasksByProject.getTasksByMember(memberId);
+        res.json(tasks);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
