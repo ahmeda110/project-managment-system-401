@@ -30,6 +30,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       setOpenCategory(null);
     }
     setActiveTab(itemName);
+    setActiveSubTab(null);
     navigate(itemLink);
   };
 
@@ -71,9 +72,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         {Object.keys(navigationItems).map((val) => (
           <div key={val}>
             <div
-              className={`navigation-item ${
-                activeTab === val ? "active" : ""
-              }`}
+              className={`navigation-item ${activeTab === val && !activeSubTab ? "active" : ""}`}
               onClick={() => handleItemClick(val, navigationItems[val].link)}
             >
               <div className="displayRow">
@@ -86,9 +85,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
               Object.keys(navigationItems[val].subcategories).map((sub) => (
                 <div
                   key={sub}
-                  className={`navigation-item ${
-                    activeSubTab === sub ? "active" : ""
-                  }`}
+                  className={`navigation-item ${activeSubTab === sub ? "active" : ""}`}
                   onClick={() =>
                     handleSubItemClick(
                       sub,
