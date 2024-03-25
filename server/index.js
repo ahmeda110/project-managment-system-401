@@ -23,7 +23,7 @@ const members = new Members(); // Create an instance of the Members class
 app.post('/api/tasks', async (req, res) => {
     try {
         const { status, name, description, priority, assigned_to, due_date, estimated_time } = req.body;
-        const newTask = await tasks.createTask(status, name, description, priority, assigned_to, due_date, estimated_time);
+        const newTask = await tasks.createTask(String(status), name, description, priority, assigned_to, due_date, estimated_time);
         res.json(newTask);
     } catch (error) {
         res.status(500).json({ error: error.message });
