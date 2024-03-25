@@ -8,8 +8,7 @@ function Login() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            // Redirect to /dashboard once user is authenticated
-            navigate('/dashboard');
+            navigate('/projects');
         }
     }, [isAuthenticated, navigate]);
 
