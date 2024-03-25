@@ -22,8 +22,8 @@ const members = new Members(); // Create an instance of the Members class
 // Route to create a task -- DONE
 app.post('/api/tasks', async (req, res) => {
     try {
-        const { status, name, description, priority, assigned_to, due_date, estimated_time } = req.body;
-        const newTask = await tasks.createTask(String(status), name, description, priority, assigned_to, due_date, estimated_time);
+        const { status, name, description, priority, assigned_to, due_date, project_id } = req.body;
+        const newTask = await tasks.createTask(String(status), name, description, priority, assigned_to, due_date, project_id);
         res.json(newTask);
     } catch (error) {
         res.status(500).json({ error: error.message });
