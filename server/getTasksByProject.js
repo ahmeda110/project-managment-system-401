@@ -8,21 +8,13 @@ class TasksByProject {
 
     async getTasksByProject(projectId) {
         try {
-            const { data: projectTasks, error: projectTasksError } = await this.client
-                .from('project_task')
-                .select('task_id')
-                .eq('project_id', projectId);
-            if (projectTasksError) throw projectTasksError;
-
-            const taskIds = projectTasks.map(task => task.task_id);
-
-            const { data: tasks, error: tasksError } = await this.client
+            const { data: tasks, error } = await this.client
                 .from('task')
                 .select('*')
-                .in('task_id', taskIds);
-
-            if (tasksError) throw tasksError;
-
+                .eq('project_id', projectId);
+            
+            if (error) throw error;
+    
             return tasks;
         } catch (error) {
             console.error(error);
