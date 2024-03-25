@@ -9,6 +9,7 @@ import Projects from "./components/Projects/Projects";
 
 function App() {
   const [activeTab, setActiveTab] = useState("All tasks");
+  const [activeSubTab, setActiveSubTab] = useState("");
 
   return (
     <BrowserRouter>
@@ -16,24 +17,24 @@ function App() {
         <Route
           path="/"
           element={
-            <Projects activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Projects activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
           }
         ></Route>
         <Route
           path="/project"
           element={
-            <Dashboard activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Dashboard activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
           }
         ></Route>
         <Route
           path="/account"
           element={
-            <Account activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Account activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
           }
         ></Route>
         <Route
           path="/my-tasks"
-          element={<Tasks activeTab={activeTab} setActiveTab={setActiveTab} />}
+          element={<Tasks activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />}
         />
       </Routes>
     </BrowserRouter>

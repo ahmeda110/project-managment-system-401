@@ -9,39 +9,8 @@ import { IoIosCloseCircle } from "react-icons/io";
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
 
-function Dashboard({ activeTab, setActiveTab }) {
-  const initialTasks = [
-    {
-      title: "Dentist Appointment",
-      description: "Schedule a 6-month check-up with the dentist",
-      due: "2025-10-25",
-      status: true,
-    },
-    {
-      title: "Grocery Shopping",
-      description: "Buy groceries for the week",
-      due: "2025-10-26",
-      status: false,
-    },
-    {
-      title: "Car Service",
-      description: "Take the car for its annual service",
-      due: "2025-11-01",
-      status: true,
-    },
-    {
-      title: "Book Club",
-      description: "Prepare for the next book club meeting",
-      due: "2025-11-05",
-      status: false,
-    },
-    {
-      title: "Renew Gym Membership",
-      description: "Renew the annual gym membership",
-      due: "2025-11-10",
-      status: true,
-    },
-  ];
+function Dashboard({ activeTab, setActiveTab, initialTasks, activeSubTab, setActiveSubTab }) {
+
 
   const [tasks, setTasks] = useState(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,8 +95,7 @@ function Dashboard({ activeTab, setActiveTab }) {
       <div className="dashboard-container">
         <Sidebar
           className="sidebar-container"
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab}
         />
         <div className="content-container">
           <div className="content-header">

@@ -46,6 +46,7 @@
 
 .navigation-item {
   display: flex;
+  flex-direction: column;
   column-gap: 1em;
   align-items: center;
   justify-content: center;
@@ -75,4 +76,11 @@
 
 .sign-out-container {
   margin-bottom: -1.5em;
+}
+
+.displayRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: .5em;
 }
