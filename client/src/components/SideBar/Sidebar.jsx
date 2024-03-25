@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import ProfilePic from "../../assets/images/profile.jpeg";
 import { RiHome2Fill } from "react-icons/ri";
 import { RiAccountBoxFill } from "react-icons/ri";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -40,15 +39,22 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   };
   const { user, isAuthenticated, logout } = useAuth0();
   const [userName, setUserName] = useState('');
+  const [userPicture, setUserPicture] = useState('');
 
   useEffect(() => {
     if (user) {
       setUserName(user.name);
+      setUserPicture(user.picture);
       localStorage.setItem('userName', user.name);
+      localStorage.setItem('userPicture', user.picture);
     } else {
       const storedName = localStorage.getItem('userName');
+      const storedPicture = localStorage.getItem('userPicture');
       if (storedName) {
         setUserName(storedName);
+      }
+      if (storedPicture) {
+        setUserPicture(storedPicture);
       }
     }
   }, [user]);
@@ -56,7 +62,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <img src={ProfilePic} alt="Profile" />
+        <img src={userPicture} alt="Profile" />
         <div className="profile-name">
           {userName || "Loading..."}
         </div>
