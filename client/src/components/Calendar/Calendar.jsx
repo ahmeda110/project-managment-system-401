@@ -88,7 +88,7 @@ const Calendar = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
         setActiveSubTab={setActiveSubTab}
       />
 
-      <div className="content-container">
+      <div className="content-calendar-container">
           <div className="calendar-header">
             <div>
                 <h2 style={{fontSize: "27.5px"}}>
