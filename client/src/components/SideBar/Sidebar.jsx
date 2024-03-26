@@ -47,24 +47,32 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     navigate(subItemLink);
   };
   const { user, isAuthenticated, logout } = useAuth0();
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
   const [userPicture, setUserPicture] = useState("");
+
+  const updateUserNameFromStorage = (email) => {
+    const savedUserName = localStorage.getItem(email);
+    setUserName(savedUserName || email);
+  };
+
+  useEffect(() => {
+    const handleUsernameChange = (event) => {
+      if (user?.email) {
+        localStorage.setItem(user.email, event.detail);
+      }
+      setUserName(event.detail);
+    };
+
+    window.addEventListener('usernameUpdated', handleUsernameChange);
+
+    return () => {
+      window.removeEventListener('usernameUpdated', handleUsernameChange);
+    };
+  }, [user?.email]);
 
   useEffect(() => {
     if (user) {
-      setUserName(user.name);
-      setUserPicture(user.picture);
-      localStorage.setItem("userName", user.name);
-      localStorage.setItem("userPicture", user.picture);
-    } else {
-      const storedName = localStorage.getItem("userName");
-      const storedPicture = localStorage.getItem("userPicture");
-      if (storedName) {
-        setUserName(storedName);
-      }
-      if (storedPicture) {
-        setUserPicture(storedPicture);
-      }
+      updateUserNameFromStorage(user.email);
     }
   }, [user]);
 
