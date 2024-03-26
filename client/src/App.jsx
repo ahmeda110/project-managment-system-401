@@ -6,9 +6,10 @@ import axios from "axios";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Account from "./components/Account/Account";
 import Login from "./components/Login/Login";
-import "./App.css";
-import Tasks from "./components/Tasks/Tasks";
 import Projects from "./components/Projects/Projects";
+import Calendar from "./components/Calendar/Calendar";
+
+import "./App.css";
 
 function App() {
   const [activeTab, setActiveTab] = useState("All Projects");
@@ -43,6 +44,12 @@ function App() {
             path="/account"
             element={
               <Account activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
+            }
+          ></Route>
+          <Route
+            path="/calendar-view"
+            element={
+              <Calendar activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
             }
           ></Route>
 
