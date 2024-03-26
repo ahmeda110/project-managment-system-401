@@ -127,6 +127,28 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setIsSideMenuOpen(true);
   };
 
+  const getMemberNameByID = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
+      return response.data.name;
+    } catch (error) {
+      console.error(error);
+      return "Unknown"; // Return a default value in case of error
+    }
+  }
+
+  const AsyncComponent = ({ promise }) => {
+    const [data, setData] = useState(null);
+  
+    useEffect(() => {
+      promise.then((resolvedData) => {
+        setData(resolvedData);
+      });
+    }, [promise]);
+  
+    return <>{data}</>;
+  };
+
   return (
     <>
       <div className="dashboard-container">
@@ -159,7 +181,12 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     <div className="assigned-to-container">
                       <div className="assigned-to">
                         <div className="dot"></div>
-                        {task.assigned_to || task.assignedTo}
+                        {task.assigned_to && (
+  <AsyncComponent promise={getMemberNameByID(task.assigned_to)} />
+)}
+{task.assignedTo && (
+  <AsyncComponent promise={getMemberNameByID(task.assignedTo)} />
+)}
                       </div>
                     </div>
                   </div>
