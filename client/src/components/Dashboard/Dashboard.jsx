@@ -37,12 +37,11 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
-    if(!isNaN(id)) {
-        getTaskByProject();
+    if (!isNaN(id)) {
+      getTaskByProject();
     } else {
-        getAllTasks();
+      getAllTasks();
     }
-    
   }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -157,33 +156,55 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   <div className="assignedTo-Title-div">
                     <div className="title">{task.name || task.title}</div>
                     <div className="assigned-to-container">
-                      
                       <div className="assigned-to">
                         <div className="dot"></div>
-                        {task.assigned_to || task.assignedTo}</div>
+                        {task.assigned_to || task.assignedTo}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="description"><span style={{ color: "#7f7f7f"}}>{task.description}</span></div>
-                  <div className="date"><span style={{fontWeight: "bold"}}>Due Date: </span> {task.due_date || task.due}</div>
+
+                  <div className="description">
+                    <span style={{ color: "#7f7f7f" }}>{task.description}</span>
+                  </div>
+                  <div className="date">
+                    <span style={{ fontWeight: "bold" }}>Due Date: </span>{" "}
+                    {task.due_date || task.due}
+                  </div>
                   {/* Display priority */}
-                  
+
                   {/* Display assigned to */}
                   <div className="card-action-section">
-                    <div style={{display: "flex", alignItems: "center", columnGap: ".5em"}}>
                     <div
-                      className="status"
-                      style={{ background: task.status ? "limegreen" : "red" }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStatusChange(index);
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        columnGap: ".5em",
                       }}
                     >
-                      {task.status ? "Completed" : "Incomplete"}
+                      <div
+                        className="status"
+                        style={{
+                          background: task.status ? "limegreen" : "red",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStatusChange(index);
+                        }}
+                      >
+                        {task.status ? "Completed" : "Incomplete"}
+                      </div>
+                      <div
+                        className="status"
+                        style={{
+                          background: "#fbff00",
+                          color: "black",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Priority - {task.priority}
+                      </div>
                     </div>
-                      <div className="status" style={{background: "#fbff00", color: "black", fontWeight: "bold"}}>Priority - {task.priority}</div>
-                    </div>
-                    
+
                     <div
                       style={{
                         display: "flex",
@@ -251,11 +272,14 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 }
 
 function Modal({ task, onUpdate, onClose, isAdding }) {
-  const [title, setTitle] = useState(task?.title || "");
+  console.log("task:", task);
+  console.log("isAdding:", isAdding);
+  const [title, setTitle] = useState(task?.name || "");
   const [description, setDescription] = useState(task?.description || "");
-  const [due, setDue] = useState(task?.due || "");
+  const [due, setDue] = useState(task?.due_date || "");
   const [priority, setPriority] = useState(task?.priority || ""); // State for priority
-  const [assignedTo, setAssignedTo] = useState(task?.assignedTo || ""); // State for assigned to
+  const [assignedTo, setAssignedTo] = useState(task?.assigned_to || ""); // State for assigned to
+  const { id } = useParams();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -274,10 +298,10 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
         name: title,
         description: description,
         due_date: due,
-        status,
+        status: status ? "TRUE" : "FALSE", // needed for supabase for some reason
         priority,
         assigned_to: assignedTo,
-        estimated_time: 3,
+        project_id: id,
       })
       .then((result) => {
         console.log(result);
