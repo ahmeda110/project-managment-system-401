@@ -1,3 +1,4 @@
+const Projects = require('./Projects');
 const { SupabaseConnector } = require('./SupabaseConnector');
 
 class Tasks {
@@ -6,11 +7,11 @@ class Tasks {
         this.client = this.supabaseConnector.getSupabaseClient();
     }
 
-    async createTask(status, name, description, priority, assigned_to, due_date, estimated_time) {
+    async createTask(status, name, description, priority, assigned_to, due_date, project_id) {
         try {
             const { data, error } = await this.client
                 .from('task')
-                .insert({ status, name, description, priority, assigned_to, due_date, estimated_time })
+                .insert({ status, name, description, priority, assigned_to, due_date, project_id })
                 .single();
             if (error) throw error;
             return data;
