@@ -148,6 +148,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     return <>{data}</>;
   };
 
+
   return (
     <>
       <div className="dashboard-container">
@@ -336,6 +337,17 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       .catch((err) => console.error(err));
   };
 
+  const [allUsers, setAllUsers] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3100/api/members`)
+      .then((result) => {
+        console.log(result.data)
+        setAllUsers(result.data);
+      })
+      .catch((err) => console.error(err));
+  }, [])
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -398,9 +410,9 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
               onChange={(e) => setAssignedTo(e.target.value)}
             >
               <option value="">Select Assignee</option>
-              <option value="1">John Doe</option>
-              <option value="2">Jane Smith</option>
-              <option value="3">David Johnson</option>
+              {allUsers && allUsers.map((val) => (
+                <option value={val.member_id}>{val.name}</option>
+              ))}
             </select>
           </div>
 

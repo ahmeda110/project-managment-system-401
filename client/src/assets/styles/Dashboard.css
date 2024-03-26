@@ -136,3 +136,29 @@
   background-color: rgb(70, 70, 70);
   border-radius: 50%;
 }
+
+.modal-content {
+  background: #2f2f2f !important;
+  padding: 3em 5em !important;
+  border-radius: 20px !important
+}
+
+#priority, #assignedTo {
+  background: rgb(60, 60, 60);
+  color: lightgray;
+  border-radius: 8px;
+  padding: 1em;
+  border: 0;
+
+  -moz-appearance:none; /* Firefox */
+  -webkit-appearance:none; /* Safari and Chrome */
+  appearance:none;
+}
+
+#priority:focus, #assignedTo:focus {
+  outline: none;
+}
+
+.modal-form label {
+  margin-bottom: .25em;
+}
