@@ -18,12 +18,11 @@
 
   border-radius: 10px;
   border: 1.5px solid rgb(96, 96, 96);
-  
+
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-
 
 .calendar-header {
   display: flex;
@@ -54,7 +53,7 @@
 
 .calendar-day {
   border: 1px solid rgb(77, 77, 77);
-  padding: 1.5em;
+  padding: 0.5em;
   border-radius: 5px;
 }
 
@@ -74,7 +73,7 @@
 }
 
 .task-bar:nth-child(2) {
-    margin-top: 1.5em;
+  margin-top: 1.5em;
 }
 
 .task-bar:hover {

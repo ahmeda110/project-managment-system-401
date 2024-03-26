@@ -34,20 +34,7 @@ class Projects {
         }
     }
 
-    async updateProject(id, updates) {
-        try {
-            const { data, error } = await this.client
-                .from('project')
-                .update(updates)
-                .match({ id })
-                .single();
-            if (error) throw error;
-            return data;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
+
     async deleteProject(projectId) {
         try {
             const supabase = SupabaseConnector.getInstance().getSupabaseClient();
@@ -89,6 +76,36 @@ class Projects {
             throw error;
         }
     }
-}
+    
+    
+    // projectsService.js
 
+    async  getProjectNameById(projectId) {
+    try {
+        const supabase = SupabaseConnector.getInstance().getSupabaseClient();
+
+        const { data, error } = await supabase
+            .from('project')
+            .select('name')
+            .eq('project_id', projectId)
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            throw new Error('Project not found');
+        }
+
+        return data.name;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }        
+    
+    
+}
+    
+}
 module.exports = Projects;
