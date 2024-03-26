@@ -48,16 +48,41 @@ class Projects {
             throw error;
         }
     }
-
-    async deleteProject(id) {
+    async deleteProject(projectId) {
         try {
-            const { data, error } = await this.client
+            const supabase = SupabaseConnector.getInstance().getSupabaseClient();
+            
+            // Delete tasks related to the project
+            const deleteTaskResponse = await supabase
+                .from('task')
+                .delete()
+                .eq('project_id', projectId);
+    
+            if (deleteTaskResponse.error) {
+                throw deleteTaskResponse.error;
+            }
+    
+            // Delete project members related to the project
+            const deleteMemberResponse = await supabase
+                .from('project_member')
+                .delete()
+                .eq('project_id', projectId);
+    
+            if (deleteMemberResponse.error) {
+                throw deleteMemberResponse.error;
+            }
+    
+            // Now delete the project from the project table
+            const deleteProjectResponse = await supabase
                 .from('project')
                 .delete()
-                .match({ id })
-                .single();
-            if (error) throw error;
-            return data;
+                .match({ project_id: projectId });
+    
+            if (deleteProjectResponse.error) {
+                throw deleteProjectResponse.error;
+            }
+    
+            return deleteProjectResponse.data;
         } 
         catch (error) {
             console.error(error);
