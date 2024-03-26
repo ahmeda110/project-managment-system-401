@@ -9,6 +9,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
+import TaskSideBar from "../Common/TaskSideBar";
 
 function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
@@ -242,29 +243,14 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           isAdding={isAddingTask}
         />
       )}
-      <div className={`side-menu ${isSideMenuOpen ? "open" : ""}`}>
+      <div>
         {selectedTask && (
-          <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <h2>{selectedTask.title}</h2>
-              <IoIosCloseCircle
-                size={30}
-                onClick={() => setIsSideMenuOpen(false)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-            <p>Description: {selectedTask.description}</p>
-            <p>Due: {selectedTask.due}</p>
-            <p>Status: {selectedTask.status ? "Completed" : "Incomplete"}</p>
-            <p>Priority: {selectedTask.priority}</p> {/* Display priority */}
-            <p>Assigned To: {selectedTask.assignedTo}</p>{" "}
-          </>
+          <TaskSideBar
+            tasks={[selectedTask]}
+            setIsSideMenuOpen={setIsSideMenuOpen}
+            isSideMenuOpen={isSideMenuOpen}
+            title="Task Details"
+          />
         )}
       </div>
     </>
