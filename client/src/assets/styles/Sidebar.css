@@ -84,3 +84,11 @@
     align-items: center;
     column-gap: .5em;
 }
+
+.subcategory-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align subcategories from the left */
+  justify-content: end;
+  width: 50%;
+}
