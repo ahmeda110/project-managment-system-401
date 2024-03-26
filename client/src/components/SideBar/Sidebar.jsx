@@ -72,7 +72,11 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     <div className="sidebar-container">
       <div className="sidebar-header">
         <div className="profile">
-          {userName.split(" ")[0][0]}{userName.split(" ")[1][0]}
+        {userName && userName.includes(" ") ? (
+            <>{userName.split(" ")[0][0]}{userName.split(" ")[1][0]}</>
+          ) : (
+            <>{userName?.[0]}</>
+        )}
         </div>
         <div className="profile-name">{userName || "Loading..."}</div>
       </div>
