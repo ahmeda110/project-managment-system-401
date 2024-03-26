@@ -19,3 +19,52 @@
   border-radius: 10px;
   border: 1.5px solid rgb(96, 96, 96);
 }
+
+.form-container {
+  background: rgb(70, 70, 70);
+  padding: 1em;
+  border-radius: 10px;
+  width: 50%;
+  max-width: 400px;
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group label {
+  font-size: 16px;
+  font-weight: 700;
+  color: lightgray;
+  margin-bottom: 0.5em;
+}
+
+.form-control {
+  background-color: rgb(60, 60, 60);
+  border-radius: 10px;
+  padding: 1em;
+  border: none;
+  color: lightgray;
+  font-size: 16px;
+}
+
+.update-button {
+  background-color: #32cd32;
+  border: none;
+  border-radius: 5px;
+  padding: 1em;
+  font-weight: 600;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #28a745;
+}
