@@ -19,9 +19,9 @@
 
 .sidebar-header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  column-gap: 0.5em;
+  row-gap: 0.5em;
 }
 
 .sidebar-header img {
@@ -90,5 +90,46 @@
   flex-direction: column;
   align-items: flex-start; /* Align subcategories from the left */
   justify-content: end;
-  width: 50%;
+  width: 100%;
+  width: calc(100% - 0em);
+
+}
+
+.subcategory-item {
+  padding-left: 2em;
+}
+
+.navigation-item {
+  display: flex;
+  flex-direction: column;
+  column-gap: 1em;
+  align-items: flex-start; /* Align items from the left */
+  justify-content: center;
+  width: calc(100% - 2em);
+  padding: 1em 0;
+  padding-left: 2em;
+}
+
+.signout-item {
+  display: flex;
+  column-gap: 1em;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5em 0;
+  margin-left: 1em; /* Adjust margin to shift items inside the subcategory container */
+}
+
+.profile {
+  background: limegreen;
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 100%;
+  font-size: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 600;
 }

@@ -9,6 +9,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
+import TaskSideBar from "../Common/TaskSideBar";
 
 function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
@@ -126,6 +127,28 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setIsSideMenuOpen(true);
   };
 
+  const getMemberNameByID = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
+      return response.data.name;
+    } catch (error) {
+      console.error(error);
+      return "Unknown"; // Return a default value in case of error
+    }
+  }
+
+  const AsyncComponent = ({ promise }) => {
+    const [data, setData] = useState(null);
+  
+    useEffect(() => {
+      promise.then((resolvedData) => {
+        setData(resolvedData);
+      });
+    }, [promise]);
+  
+    return <>{data}</>;
+  };
+
   return (
     <>
       <div className="dashboard-container">
@@ -158,7 +181,12 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     <div className="assigned-to-container">
                       <div className="assigned-to">
                         <div className="dot"></div>
-                        {task.assigned_to || task.assignedTo}
+                        {task.assigned_to && (
+  <AsyncComponent promise={getMemberNameByID(task.assigned_to)} />
+)}
+{task.assignedTo && (
+  <AsyncComponent promise={getMemberNameByID(task.assignedTo)} />
+)}
                       </div>
                     </div>
                   </div>
@@ -242,29 +270,14 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           isAdding={isAddingTask}
         />
       )}
-      <div className={`side-menu ${isSideMenuOpen ? "open" : ""}`}>
+      <div>
         {selectedTask && (
-          <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <h2>{selectedTask.title}</h2>
-              <IoIosCloseCircle
-                size={30}
-                onClick={() => setIsSideMenuOpen(false)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-            <p>Description: {selectedTask.description}</p>
-            <p>Due: {selectedTask.due}</p>
-            <p>Status: {selectedTask.status ? "Completed" : "Incomplete"}</p>
-            <p>Priority: {selectedTask.priority}</p> {/* Display priority */}
-            <p>Assigned To: {selectedTask.assignedTo}</p>{" "}
-          </>
+          <TaskSideBar
+            tasks={[selectedTask]}
+            setIsSideMenuOpen={setIsSideMenuOpen}
+            isSideMenuOpen={isSideMenuOpen}
+            title="Task Details"
+          />
         )}
       </div>
     </>

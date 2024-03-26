@@ -108,19 +108,21 @@
 
 .assignedTo-Title-div .assigned-to {
   background: lightgray;
-  width: 4em;
-  padding: .15em 1em;
+  max-width: 12em;
+  padding: .25em 1em;
   border-radius: 25px;
 
   color: rgb(70, 70, 70);
   font-weight: bold;
   text-align: center;
-  font-size: 15px;
+  font-size: 12px;
 
   display: flex;
   align-items: center;
   justify-content: center;
   column-gap: .25em;
+
+  text-transform: capitalize;
 }
 
 .assigned-to-container {
