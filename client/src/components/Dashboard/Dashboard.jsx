@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../SideBar/Sidebar";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { MdEditDocument } from "react-icons/md";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { IoIosCloseCircle } from "react-icons/io";
+import { CiLink } from "react-icons/ci";
 
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
@@ -13,6 +14,9 @@ import TaskSideBar from "../Common/TaskSideBar";
 
 function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
+
+  const [cachedMemberNames, setCachedMemberNames] = useState({});
+  const cachedProjectNames = useRef({});
 
   const getAllTasks = () => {
     axios
@@ -34,6 +38,8 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       .catch((err) => console.error(err));
   };
 
+  const [projectName, setProjectName] = useState(null);
+
   const isNumber = !isNaN("2");
 
   const [initialTasks, setInitialTasks] = useState([]);
@@ -43,7 +49,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     } else {
       getAllTasks();
     }
-  }, []);
+    if (id === "all") {
+      setProjectName(null);
+    } else {
+      try {
+        console.log("getting project name");
+        axios
+          .get(`http://localhost:3100/project/${id}`)
+          .then((result) => {
+            console.log("got result: ", result.data);
+            setProjectName(result.data.projectName);
+          })
+          .catch((err) => console.error(err));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, [id]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState({
@@ -58,6 +80,8 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleStatusChange = (index) => {
     const newTasks = initialTasks.map((task, idx) => {
@@ -127,27 +151,67 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setIsSideMenuOpen(true);
   };
 
-  const getMemberNameByID = async (id) => {
+  // const getMemberNameByID = async (id) => {
+  //   console.log("getting member name, id:", id);
+  //   if (cachedMemberNames[id]) {
+  //     console.log("got cached member name");
+  //     return Promise.resolve(cachedMemberNames[id]);
+  //   }
+
+  // };
+
+  useEffect(() => {
+    console.log("in useEffect for caching stuff, tasks:", initialTasks);
+    for (const task of initialTasks) {
+      console.log("task:", task);
+      if (task.assigned_to && !cachedMemberNames[task.assigned_to]) {
+        console.log("loading in name from cache");
+        addMemberNameToCache(task.assigned_to);
+      } else {
+        console.log(
+          "task assigned to:",
+          task.assigned_to,
+          "cached member names:",
+          cachedMemberNames[task.assigned_to]
+        );
+      }
+
+      if (task.assignedTo && !cachedMemberNames[task.assignedTo]) {
+        console.log("loading in name from cache");
+        addMemberNameToCache(task.assignedTo);
+      } else {
+        console.log(
+          "task assigned to:",
+          task.assignedTo,
+          "cached member names:",
+          cachedMemberNames[task.assignedTo]
+        );
+      }
+    }
+  }, [initialTasks, cachedMemberNames]);
+
+  const addMemberNameToCache = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
+      const response = await axios.get(
+        `http://localhost:3100/api/members/${id}/name`
+      );
+      console.log(
+        "got member name from server, adding to cache: ",
+        response.data
+      );
+      setCachedMemberNames({ ...cachedMemberNames, [id]: response.data.name });
       return response.data.name;
     } catch (error) {
       console.error(error);
       return "Unknown"; // Return a default value in case of error
     }
-  }
-
-  const AsyncComponent = ({ promise }) => {
-    const [data, setData] = useState(null);
-  
-    useEffect(() => {
-      promise.then((resolvedData) => {
-        setData(resolvedData);
-      });
-    }, [promise]);
-  
-    return <>{data}</>;
   };
+
+  const goToProject = (projectId) => {
+    navigate(`/tasks/${projectId}`);
+  };
+
+  console.log("proj name:", projectName);
 
   return (
     <>
@@ -161,7 +225,9 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         />
         <div className="content-container">
           <div className="content-header">
-            <div className="title">All Tasks</div>
+            <div className="title">
+              {projectName !== null && `${projectName}:`} All Tasks
+            </div>
             <AiFillPlusCircle
               size={40}
               style={{ cursor: "pointer" }}
@@ -170,94 +236,114 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           </div>
           <div className="tasks-container">
             {initialTasks &&
-              initialTasks.map((task, index) => (
-                <div
-                  className="card"
-                  key={index}
-                  onClick={() => handleTaskClick(task)}
-                >
-                  <div className="assignedTo-Title-div">
-                    <div className="title">{task.name || task.title}</div>
-                    <div className="assigned-to-container">
-                      <div className="assigned-to">
-                        <div className="dot"></div>
-                        {task.assigned_to && (
-  <AsyncComponent promise={getMemberNameByID(task.assigned_to)} />
-)}
-{task.assignedTo && (
-  <AsyncComponent promise={getMemberNameByID(task.assignedTo)} />
-)}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="description">
-                    <span style={{ color: "#7f7f7f" }}>{task.description}</span>
-                  </div>
-                  <div className="date">
-                    <span style={{ fontWeight: "bold" }}>Due Date: </span>{" "}
-                    {task.due_date || task.due}
-                  </div>
-                  {/* Display priority */}
-
-                  {/* Display assigned to */}
-                  <div className="card-action-section">
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        columnGap: ".5em",
-                      }}
-                    >
+              initialTasks.map((task, index) => {
+                return (
+                  <div
+                    className="card"
+                    key={index}
+                    onClick={() => handleTaskClick(task)}
+                  >
+                    {id === "all" && (
                       <div
-                        className="status"
-                        style={{
-                          background: task.status ? "limegreen" : "red",
-                        }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleStatusChange(index);
+                          goToProject(task.project_id);
                         }}
                       >
-                        {task.status ? "Completed" : "Incomplete"}
+                        Go to Project
+                        <CiLink size={20} />
                       </div>
-                      <div
-                        className="status"
-                        style={{
-                          background: "#fbff00",
-                          color: "black",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Priority - {task.priority}
+                    )}
+                    <div className="assignedTo-Title-div">
+                      <div className="title">{task.name || task.title}</div>
+                      <div className="assigned-to-container">
+                        <div className="assigned-to">
+                          <div className="dot"></div>
+                          {task.assigned_to && (
+                            <div>
+                              {cachedMemberNames[task.assigned_to] ??
+                                "Loading..."}
+                            </div>
+                          )}
+                          {task.assignedTo && (
+                            <div>
+                              {cachedMemberNames[task.assignedTo] ??
+                                "Loading..."}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        columnGap: ".5em",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <MdEditDocument
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditClick(index);
+                    <div className="description">
+                      <span style={{ color: "#7f7f7f" }}>
+                        {task.description}
+                      </span>
+                    </div>
+                    <div className="date">
+                      <span style={{ fontWeight: "bold" }}>Due Date: </span>{" "}
+                      {task.due_date || task.due}
+                    </div>
+                    {/* Display priority */}
+                    {/* Display assigned to */}
+                    <div className="card-action-section">
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          columnGap: ".5em",
                         }}
-                      />
-                      <RiDeleteBin2Fill
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTask(index, task.task_id);
+                      >
+                        <div
+                          className="status"
+                          style={{
+                            background: task.status ? "limegreen" : "red",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStatusChange(index);
+                          }}
+                        >
+                          {task.status ? "Completed" : "Incomplete"}
+                        </div>
+                        <div
+                          className="status"
+                          style={{
+                            background: "#fbff00",
+                            color: "black",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Priority - {task.priority}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          columnGap: ".5em",
+                          cursor: "pointer",
                         }}
-                      />
+                      >
+                        <MdEditDocument
+                          size={26}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(index);
+                          }}
+                        />
+                        <RiDeleteBin2Fill
+                          size={26}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTask(index, task.task_id);
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
           </div>
         </div>
       </div>
