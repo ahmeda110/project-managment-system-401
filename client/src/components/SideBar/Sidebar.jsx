@@ -14,7 +14,8 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       icon: <RiHome2Fill size={18} />,
       link: "/projects",
       subcategories: {
-        "My Tasks": { icon: <RiHome2Fill size={18} />, link: "/tasks/all" },
+        "All Tasks": { icon: <RiHome2Fill size={18} />, link: "/tasks/all" },
+        "Calendar": { icon: <RiHome2Fill size={18} />, link: "/calendar-view" },
       },
     },
     Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
