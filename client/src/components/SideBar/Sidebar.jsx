@@ -71,7 +71,9 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <img src={userPicture} alt="Profile" />
+        <div className="profile">
+          {userName.split(" ")[0][0]}{userName.split(" ")[1][0]}
+        </div>
         <div className="profile-name">{userName || "Loading..."}</div>
       </div>
       <div className="navigation-items">
@@ -102,7 +104,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                         )
                       }
                     >
-                      <div className="displayRow">
+                      <div className="displayRow subcategory-item">
                         {navigationItems[val].subcategories[sub].icon}
                         <div>{sub}</div>
                       </div>
