@@ -28,7 +28,11 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
 
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
+  const [editingProject, setEditingProject] = useState({
+    title: "",
+    description: "",
+    leader: "",
+  });
   const [isAddingProject, setIsAddingProject] = useState(false);
 
   const handleProjectUpdate = (updatedProject) => {
@@ -51,8 +55,8 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
   const handleAddProjectClick = () => {
     setIsModalOpen(true);
     setIsAddingProject(true);
-    const newProject = { id: intialProjects.length + 1, title, description };
-    setinitialProjects([...intialProjects, newProject]);
+    const newProject = { id: intialProjects.length + 1, title: "", description: "" };
+    //setinitialProjects([...intialProjects, newProject]);
     setEditingProject(newProject);
   };
 
@@ -140,6 +144,17 @@ function ProjectModal({ project, onUpdate, onClose, isAdding }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onUpdate({ ...project, title, description });
+
+    axios
+      .post("http://localhost:3100/api/projects", {
+        name: title,
+        description: description,
+        leader: ""
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
