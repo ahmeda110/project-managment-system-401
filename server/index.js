@@ -6,6 +6,7 @@ const TasksByProject = require('./getTasksByProject');
 const projects = new Projects(); // Create an instance of the Projects class
 const Members = require('./Members');
 
+const Chat = require('./chat');
 
 
 const PORT = 3100;
@@ -14,6 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const chat = new Chat();
 const tasks = new Tasks(); // Create an instance of the Tasks class
 const tasksByProject = new TasksByProject();
 const members = new Members(); // Create an instance of the Members class
@@ -229,6 +231,45 @@ app.get('/api/members/email/:email', async (req, res) => {
     }
 });
 
+
+
+/////////////////////---CHAT---/////////////////////////////////////////////
+
+// Create a new chat message
+app.post('/chat', async (req, res) => {
+    const { member_id_to, member_id_from, message } = req.body;
+    try {
+        const newChat = await chat.createChat(member_id_to, member_id_from, message);
+        res.json(newChat);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+// Delete a chat message
+app.delete('/chat/:chatId', async (req, res) => {
+    const chatId = req.params.chatId;
+    try {
+        const deletedChat = await chat.deleteChat(chatId);
+        res.json(deletedChat);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get chats between two members
+app.get('/chat/:memberIdTo/:memberfrom', async (req, res) => {
+    const memberIdTo = req.params.memberIdTo;
+    const memberfrom = req.params.memberfrom;
+    try {
+        const chats = await chat.getChatsByRecipient(memberIdTo, memberfrom);
+        res.json(chats);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
