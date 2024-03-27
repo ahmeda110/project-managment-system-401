@@ -260,7 +260,8 @@ app.get('/chat/:memberIdTo/:memberfrom', async (req, res) => {
     const memberIdTo = req.params.memberIdTo;
     const memberfrom = req.params.memberfrom;
     try {
-        const chats = await chat.getChatsByRecipient(memberIdTo, memberfrom);
+        const chats = await chat.getChatsByRecipient(parseInt(memberIdTo), parseInt(memberfrom));
+        console.log(chats)
         res.json(chats);
     } catch (error) {
         res.status(500).json({ error: error.message });

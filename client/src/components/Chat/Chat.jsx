@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../assets/styles/Chat.css";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import Sidebar from "../SideBar/Sidebar";
 
@@ -9,6 +10,8 @@ const Chat = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
+  const { user } = useAuth0();
 
   const [users, setUsers] = useState([]);
 
@@ -22,14 +25,47 @@ const Chat = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
   }, [])
 
 
-  const handleUserSelect = (user) => {
+  const handleUserSelect = async(user) => {
+    if (!user) return; 
+    const currentUser = await getCurrentUserID();
+
+    axios
+    .get(`http://localhost:3100/chat/${user.member_id}/${currentUser}`)
+    .then((result) => {
+      // Extract messages from the result and update the messages state
+      const chatMessages = result.data.map((chat) => ({
+        sender: chat.member_id_from === currentUser ? "You" : user.name,
+        content: chat.message,
+        timestamp: chat.created_at,
+      }));
+      setMessages(chatMessages);
+    })
+    .catch((err) => console.error(err));
+
     setSelectedUser(user);
-    setMessages([]);
   };
 
-  const handleMessageSend = () => {
+  const getCurrentUserID = async() => {
+    const email = user?.email;
+    const emailResponse = await axios.get(`/api/members/email/${email}`);
+    const memberId = emailResponse.data.memberId;
+
+    return memberId;
+  }
+
+  const handleMessageSend = async() => {
     if (!selectedUser) return; 
 
+    axios
+      .post("http://localhost:3100/chat", {
+        member_id_to: selectedUser.member_id,
+        member_id_from: await getCurrentUserID(),
+        message: newMessage,
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.error(err));
     // Create a new message object
     const newMessageObj = {
       sender: "You",
