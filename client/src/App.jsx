@@ -9,6 +9,8 @@ import Login from "./components/Login/Login";
 import Projects from "./components/Projects/Projects";
 import Calendar from "./components/Calendar/Calendar";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 import "./App.css";
 
 function App() {
@@ -19,6 +21,30 @@ function App() {
     clientId: 'SflGMkpeqfNqnNmKb822JJypqb7QOPKn',
     redirectUri: window.location.origin
   };
+
+  // const { user } = useAuth0();
+  // const [role, setRole] = useState("member");
+  // const getuserPermission = async() => {
+  //   const email = user?.email;
+  //   const emailResponse = await axios.get(`/api/members/email/${email}`);
+  //   const memberId = emailResponse.data.memberId;
+
+
+  //   if(memberId) {
+  //     axios
+  //     .get(`http://localhost:3100/api/members/${memberId}`)
+  //     .then((result) => {
+  //       console.log("DATA");console.log(result.data)
+  //     })
+  //     .catch((err) => console.error(err));
+  //   }
+
+  // }
+
+  // useEffect(() => {
+  //   if(user)
+  //     getuserPermission();
+  // }, [user])
 
 
   return (

@@ -16,11 +16,19 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const getAllTasks = () => {
+  const getAllTasks = async() => {
     axios
       .get("http://localhost:3100/api/tasks")
-      .then((result) => {
-        setInitialTasks(result.data);
+      .then(async (result) => {
+        const updatedTasks = [];
+        for (let i = 0; i < result.data.length; i++) {
+          const task = result.data[i];
+          const assignedToName = await getMemberNameByID(task.assigned_to);
+          const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
+          const projectName = await getProjectName(task.project_id);
+          updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
+        }
+        setInitialTasks(updatedTasks);
       })
       .catch((err) => console.error(err));
       setProjectName("");
@@ -29,8 +37,16 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const getTaskByProject = () => {
     axios
       .get(`http://localhost:3100/api/tasks/project/${id}`)
-      .then((result) => {
-        setInitialTasks(result.data);
+      .then(async (result) => {
+        const updatedTasks = [];
+        for (let i = 0; i < result.data.length; i++) {
+          const task = result.data[i];
+          const assignedToName = await getMemberNameByID(task.assigned_to);
+          const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
+          const projectName = await getProjectName(task.project_id);
+          updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
+        }
+        setInitialTasks(updatedTasks);
       })
       .catch((err) => console.error(err));
   };
@@ -51,7 +67,10 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const [projectName, setProjectName] = useState("")
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
-    if (!isNaN(id)) {
+    const projectId = parseInt(id);
+    setInitialTasks("");
+
+    if (!isNaN(projectId)) {
       getTaskByProject();
       getprojectName(id, true);
     } else {
@@ -151,13 +170,6 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setInitialTasks(updatedTasks);
     console.log(updatedTasks)
   };
-
-  
-  useEffect(() => {
-    if (initialTasks.length > 0) {
-      getMemberNamesForTasks();
-    }
-  }, [id, initialTasks.length]);
   
   const getMemberNameByID = async (id) => {
     try {
