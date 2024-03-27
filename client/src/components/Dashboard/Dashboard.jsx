@@ -157,7 +157,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     if (initialTasks.length > 0) {
       getMemberNamesForTasks();
     }
-  }, [id]);
+  }, [id, initialTasks.length]);
   
   const getMemberNameByID = async (id) => {
     try {
