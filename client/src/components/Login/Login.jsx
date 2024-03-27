@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import '../../assets/styles/Login.css';
 
-function Homepage() {
+function Login() {
     const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
     const navigate = useNavigate();
 
@@ -43,4 +43,4 @@ function Homepage() {
     );
 }
 
-export default Homepage;
+export default Login;
