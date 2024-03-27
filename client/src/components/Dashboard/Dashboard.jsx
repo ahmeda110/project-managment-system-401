@@ -16,7 +16,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const getAllTasks = async() => {
+  const getAllTasks = async () => {
     axios
       .get("http://localhost:3100/api/tasks")
       .then(async (result) => {
@@ -26,13 +26,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           const assignedToName = await getMemberNameByID(task.assigned_to);
           const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
           const projectName = await getProjectName(task.project_id);
-          updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
+          updatedTasks.push({
+            ...task,
+            projectName,
+            assignedToName,
+            assignedToNameAlt,
+          });
         }
         setInitialTasks(updatedTasks);
       })
       .catch((err) => console.error(err));
-      setProjectName("");
+    setProjectName("");
   };
+
+  const [role, setRole] = useState("");
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, []);
 
   const getTaskByProject = () => {
     axios
@@ -44,7 +54,12 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           const assignedToName = await getMemberNameByID(task.assigned_to);
           const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
           const projectName = await getProjectName(task.project_id);
-          updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
+          updatedTasks.push({
+            ...task,
+            projectName,
+            assignedToName,
+            assignedToNameAlt,
+          });
         }
         setInitialTasks(updatedTasks);
       })
@@ -53,18 +68,18 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const getprojectName = (id, setName) => {
     axios
-    .get(`http://localhost:3100/api/project/name/${id}`)
-    .then((result) => {
-      console.log(result.data)
-      if(setName) {
-        setProjectName(result.data + ": ");
-      }
-      return result.data
-    })
-    .catch((err) => console.error(err));
-  }
+      .get(`http://localhost:3100/api/project/name/${id}`)
+      .then((result) => {
+        console.log(result.data);
+        if (setName) {
+          setProjectName(result.data + ": ");
+        }
+        return result.data;
+      })
+      .catch((err) => console.error(err));
+  };
 
-  const [projectName, setProjectName] = useState("")
+  const [projectName, setProjectName] = useState("");
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
     const projectId = parseInt(id);
@@ -165,16 +180,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       const assignedToName = await getMemberNameByID(task.assigned_to);
       const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
       const projectName = await getProjectName(task.project_id);
-      updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
+      updatedTasks.push({
+        ...task,
+        projectName,
+        assignedToName,
+        assignedToNameAlt,
+      });
     }
     setInitialTasks(updatedTasks);
-    console.log(updatedTasks)
+    console.log(updatedTasks);
   };
-  
+
   const getMemberNameByID = async (id) => {
     try {
       if (id) {
-        const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
+        const response = await axios.get(
+          `http://localhost:3100/api/members/${id}/name`
+        );
         return response.data.name;
       }
       return "Unknown";
@@ -187,7 +209,9 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const getProjectName = async (id) => {
     try {
       if (id) {
-        const response = await axios.get(`http://localhost:3100/api/project/name/${id}`);
+        const response = await axios.get(
+          `http://localhost:3100/api/project/name/${id}`
+        );
         return response.data;
       }
     } catch (error) {
@@ -209,11 +233,13 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         <div className="content-container">
           <div className="content-header">
             <div className="title">{projectName}All Tasks</div>
-            <AiFillPlusCircle
-              size={40}
-              style={{ cursor: "pointer" }}
-              onClick={handleAddTaskClick}
-            />
+            {!isNaN(id) && role === "admin" && (
+              <AiFillPlusCircle
+                size={40}
+                style={{ cursor: "pointer" }}
+                onClick={handleAddTaskClick}
+              />
+            )}
           </div>
           <div className="tasks-container">
             {initialTasks &&
@@ -223,20 +249,32 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   key={index}
                   onClick={() => handleTaskClick(task)}
                 >
-                  <div 
-                    style={{ display: "flex", alignitems: "center", columnGap: "5px", fontSize: "13px", marginBottom: "1em"}}
-                    onClick={(e) => { e.stopPropagation(); navigate(`/tasks/${task.project_id}`)}}
-                    >
-                  <CiLink size={22}/>
-                  {task.projectName}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignitems: "center",
+                      columnGap: "5px",
+                      fontSize: "13px",
+                      marginBottom: "1em",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/tasks/${task.project_id}`);
+                    }}
+                  >
+                    <CiLink size={22} />
+                    {task.projectName}
                   </div>
                   <div className="assignedTo-Title-div">
-                    
                     <div className="title">{task.name || task.title}</div>
                     <div className="assigned-to-container">
                       <div className="assigned-to">
                         <div className="dot"></div>
-                        <span>{task.assignedToName || task.assignedToNameAlt || "loading"}</span>
+                        <span>
+                          {task.assignedToName ||
+                            task.assignedToNameAlt ||
+                            "loading"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -290,13 +328,15 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                         cursor: "pointer",
                       }}
                     >
-                      <MdEditDocument
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditClick(index);
-                        }}
-                      />
+                      {role === "admin" && (
+                        <MdEditDocument
+                          size={26}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(index);
+                          }}
+                        />
+                      )}
                       <RiDeleteBin2Fill
                         size={26}
                         onClick={(e) => {
@@ -355,7 +395,7 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       index: task?.index,
     };
     onUpdate(taskData);
-  
+
     axios
       .post("http://localhost:3100/api/tasks", {
         name: title,
@@ -377,11 +417,11 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
     axios
       .get(`http://localhost:3100/api/members`)
       .then((result) => {
-        console.log(result.data)
+        console.log(result.data);
         setAllUsers(result.data);
       })
       .catch((err) => console.error(err));
-  }, [allUsers])
+  }, [allUsers]);
 
   return (
     <div className="modal-overlay">
@@ -445,9 +485,10 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
               onChange={(e) => setAssignedTo(e.target.value)}
             >
               <option value="">Select Assignee</option>
-              {allUsers && allUsers.map((val) => (
-                <option value={val.member_id}>{val.name}</option>
-              ))}
+              {allUsers &&
+                allUsers.map((val) => (
+                  <option value={val.member_id}>{val.name}</option>
+                ))}
             </select>
           </div>
 

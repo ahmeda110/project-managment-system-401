@@ -176,6 +176,7 @@ app.put('/api/members/:id', async (req, res) => {
     try {
         const memberId = req.params.id;
         const updates = req.body;
+        console.log(updates)
         const updatedMember = await members.updateMember(memberId, updates);
         res.json(updatedMember);
     } catch (error) {

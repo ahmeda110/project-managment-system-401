@@ -3,7 +3,7 @@ import axios from "axios";
 import Sidebar from "../SideBar/Sidebar";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { MdEditDocument } from "react-icons/md";
-import { RiDeleteBin2Fill } from "react-icons/ri";
+import { RiDeleteBin2Fill, RiOutletLine } from "react-icons/ri";
 import { IoIosCloseCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { RiHome2Fill } from "react-icons/ri";
@@ -12,19 +12,29 @@ import Dashboard from "../Dashboard/Dashboard";
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
 
-const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
+const Projects = ({
+  activeTab,
+  setActiveTab,
+  activeSubTab,
+  setActiveSubTab,
+}) => {
   const [projectClicked, setProjectClicked] = useState(false);
 
-  const [intialProjects, setinitialProjects] = useState([])
-    useEffect(() => {
-        axios.get("http://localhost:3100/api/projects")
-            .then(result => {
-              setinitialProjects(result.data);
-              console.log(result.data)
-            })
-            .catch(err => console.error(err));
-    }, []);
+  const [intialProjects, setinitialProjects] = useState([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/api/projects")
+      .then((result) => {
+        setinitialProjects(result.data);
+        console.log(result.data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
+  const [role, setRole] = useState("");
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, []);
 
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +49,7 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
     if (isAddingProject) {
       setinitialProjects([...intialProjects, updatedProject]);
     } else {
-      const newProjects = intialProjects.map(project =>
+      const newProjects = intialProjects.map((project) =>
         project.id === updatedProject.id ? updatedProject : project
       );
       setinitialProjects(newProjects);
@@ -48,14 +58,18 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
   };
 
   const handleProjectClick = (project) => {
-    console.log(project)
+    console.log(project);
     navigate(`/tasks/${project.project_id}`);
   };
 
   const handleAddProjectClick = () => {
     setIsModalOpen(true);
     setIsAddingProject(true);
-    const newProject = { id: intialProjects.length + 1, title: "", description: "" };
+    const newProject = {
+      id: intialProjects.length + 1,
+      title: "",
+      description: "",
+    };
     //setinitialProjects([...intialProjects, newProject]);
     setEditingProject(newProject);
   };
@@ -71,68 +85,75 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
     console.log(newProjects);
     setinitialProjects(newProjects);
 
-    axios.delete(`http://localhost:3100/api/projects/${id}`)
-    .then(result => {
-      console.log(result.data)
-    })
-    .catch(err => console.error(err));
-  }
+    axios
+      .delete(`http://localhost:3100/api/projects/${id}`)
+      .then((result) => {
+        console.log(result.data);
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <>
       <div className="dashboard-container">
         <Sidebar
           className="sidebar-container"
-          activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab}
+          activeTab={activeTab}
+          activeSubTab={activeSubTab}
+          setActiveTab={setActiveTab}
+          setActiveSubTab={setActiveSubTab}
         />
         <div className="content-container">
           <div className="content-header">
             <div className="title">All Projects</div>
-            <AiFillPlusCircle
-              size={40}
-              style={{ cursor: "pointer" }}
-              onClick={handleAddProjectClick}
-            />
+            {role == "admin" && (
+              <AiFillPlusCircle
+                size={40}
+                style={{ cursor: "pointer" }}
+                onClick={handleAddProjectClick}
+              />
+            )}
           </div>
           <div className="tasks-container">
-            {intialProjects && intialProjects.map((project, index) => (
-              <div
-                className="card"
-                key={index}
-                onClick={() => handleProjectClick(project)}
-              >
-                <div className="title">{project.name || project.title}</div>
-                <div className="description">{project.description}</div>
+            {intialProjects &&
+              intialProjects.map((project, index) => (
                 <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        columnGap: ".5em",
-                        cursor: "pointer",
+                  className="card"
+                  key={index}
+                  onClick={() => handleProjectClick(project)}
+                >
+                  <div className="title">{project.name || project.title}</div>
+                  <div className="description">{project.description}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      columnGap: ".5em",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <RiDeleteBin2Fill
+                      size={26}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(index, project.project_id);
                       }}
-                    >
-                      <RiDeleteBin2Fill
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTask(index, project.project_id);
-                        }}
-                      />
-                    </div>
-              </div>
-            ))}
+                    />
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
 
       {isModalOpen && (
-      <ProjectModal
-        project={editingProject}
-        onUpdate={handleProjectUpdate}
-        onClose={() => setIsModalOpen(false)}
-        isAdding={isAddingProject}
-      />
-    )}
+        <ProjectModal
+          project={editingProject}
+          onUpdate={handleProjectUpdate}
+          onClose={() => setIsModalOpen(false)}
+          isAdding={isAddingProject}
+        />
+      )}
     </>
   );
 }; //
@@ -149,7 +170,7 @@ function ProjectModal({ project, onUpdate, onClose, isAdding }) {
       .post("http://localhost:3100/api/projects", {
         name: title,
         description: description,
-        leader: ""
+        leader: "",
       })
       .then((result) => {
         console.log(result);

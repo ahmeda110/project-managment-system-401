@@ -72,3 +72,7 @@
 .update-button:hover {
   background-color: #28a745;
 }
+
+.disabled {
+  color: gray;
+}

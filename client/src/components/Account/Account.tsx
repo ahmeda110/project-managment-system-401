@@ -31,13 +31,12 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     const fetchMemberID = async () => {
       try {
         const memberID = await getUserID();
-        console.log(memberID);
   
         const result = await axios.get(`http://localhost:3100/api/members/${memberID}`);
-          setNewUsername(result.data.name || "");
-          setNewPhoneNumber(result.data.phone_number || "")
-          setNewEmail(result.data.email || "");
-          setNewPermission(result.data.permission || "")
+          setNewUsername(result.data.name || newUsername || "");
+          setNewPhoneNumber(result.data.phone_number || newPhoneNumber || "")
+          setNewEmail(result.data.email || newEmail || "");
+          setNewPermission(result.data.permission || newPermission || "")
       } catch (err) {
         console.error(err);
       }
@@ -54,12 +53,12 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     }  
     try {
       const memberID = await getUserID();
-
+      console.log(memberID)
       axios
       .put(`http://localhost:3100/api/members/${memberID}`, {
+        email: newEmail,
         name: newUsername,
         phone_number: newPhoneNumber,
-        email: newEmail,
         permission: newPermission
       })
       .then((result) => {
@@ -67,8 +66,14 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       })
       .catch((err) => console.error(err));
 
-      const event = new CustomEvent("usernameUpdated", { detail: newUsername });
-      window.dispatchEvent(event);
+      // const event = new CustomEvent("usernameUpdated", { detail: newUsername });
+      // window.dispatchEvent(event);
+
+      
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile.");
+    }
 
       setNewUsername(""); 
       setNewPhoneNumber("");
@@ -76,10 +81,6 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       setNewPermission("");
 
       alert("Profile updated successfully!");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile.");
-    }
   };
 
   return (
@@ -132,9 +133,10 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     <input
                       type="text"
                       id="newUsername"
+                      disabled
                       value={newEmail}
                       onChange={handleEmailChange}
-                      className="form-control"
+                      className="form-control disabled"
                     />
                   </div>
                   <div className="form-group" style={{ display: "flex", flexDirection: "column"}}>
@@ -149,7 +151,6 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       <option value="">Select a role</option>
                       <option value="member">Member</option>
                       <option value="admin">Admin</option>
-                      <option value="leader">Leader</option>
                     </select>
                   </div>
                 </div>
