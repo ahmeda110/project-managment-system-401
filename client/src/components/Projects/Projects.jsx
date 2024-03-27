@@ -62,6 +62,18 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
     setIsAddingProject(false); // Reset the adding task flag
   };
 
+  const handleDeleteTask = (index, id) => {
+    const newProjects = intialProjects.filter((val) => val.project_id !== id);
+    console.log(newProjects);
+    setinitialProjects(newProjects);
+
+    axios.delete(`http://localhost:3100/api/projects/${id}`)
+    .then(result => {
+      console.log(result.data)
+    })
+    .catch(err => console.error(err));
+  }
+
   return (
     <>
       <div className="dashboard-container">
@@ -87,6 +99,22 @@ const Projects = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) =>
               >
                 <div className="title">{project.name || project.title}</div>
                 <div className="description">{project.description}</div>
+                <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        columnGap: ".5em",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <RiDeleteBin2Fill
+                        size={26}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteTask(index, project.project_id);
+                        }}
+                      />
+                    </div>
               </div>
             ))}
           </div>

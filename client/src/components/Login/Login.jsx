@@ -11,6 +11,7 @@ function Homepage() {
 
     useEffect(() => {
         if (isAuthenticated) {
+            console.log(user);
             navigate('/projects');
         }
     }, [isAuthenticated, navigate]);
