@@ -27,8 +27,8 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth0();
-  const [userName, setUserName] = useState("");
-  const [memberId, setMemberId] = useState("");
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
+  const [memberId, setMemberId] = useState(localStorage.getItem("memberId") || "");
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -37,10 +37,12 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         const emailResponse = await axios.get(`/api/members/email/${email}`);
         const memberId = emailResponse.data.memberId;
         setMemberId(memberId);
+        localStorage.setItem("memberId", memberId);
   
         const memberNameResponse = await axios.get(`/api/members/${memberId}/name`);
         const memberName = memberNameResponse.data.name;
         setUserName(memberName);
+        localStorage.setItem("userName", memberName);
       } catch (error) {
         console.error('Error fetching member data:', error);
         if (error.response) {
@@ -72,6 +74,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           console.log('Username updated');
         }
         setUserName(event.detail);
+        localStorage.setItem("userName", event.detail);
       } catch (error) {
         console.error('Error updating username:', error);
       }
@@ -93,6 +96,12 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const handleSubItemClick = (subItemName, subItemLink) => {
     setActiveSubTab(subItemName);
     navigate(subItemLink);
+  };
+
+  const handleSignout = () => {
+    localStorage.removeItem("userName");
+    localStorage.removeItem("memberId");
+    logout();
   };
 
   return (
@@ -147,7 +156,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         ))}
       </div>
       <div className="sign-out-container">
-        <div className="signout-item" onClick={logout}>
+        <div className="signout-item" onClick={handleSignout}>
           <FaSignOutAlt size={20} />
           <span className="signout-text">Signout</span>
         </div>
