@@ -6,19 +6,20 @@ class Projects {
     this.client = this.supabaseConnector.getSupabaseClient();
   }
 
-  async createProject(name) {
+  async createProject(name, description, leader) {
     try {
-      const { data, error } = await this.client
-        .from("project")
-        .insert({ name })
-        .single();
-      if (error) throw error;
-      return data;
+        const { data, error } = await this.client
+            .from('project')
+            .insert({ name, description, leader })
+            .single();
+        if (error) throw error;
+        return data;
     } catch (error) {
-      console.error(error);
-      throw error;
+        console.error(error);
+        throw error;
     }
-  }
+}
+
 
   async getProjects() {
     try {
