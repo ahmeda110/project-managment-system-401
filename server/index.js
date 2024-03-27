@@ -5,7 +5,7 @@ const Projects = require('./Projects');
 const TasksByProject = require('./getTasksByProject');
 const projects = new Projects(); // Create an instance of the Projects class
 const Members = require('./Members');
-
+const Stats = require('./stats');
 const Chat = require('./chat');
 
 
@@ -19,7 +19,7 @@ const chat = new Chat();
 const tasks = new Tasks(); // Create an instance of the Tasks class
 const tasksByProject = new TasksByProject();
 const members = new Members(); // Create an instance of the Members class
-
+const stats = new Stats();
 
 // Route to create a task -- DONE
 app.post('/api/tasks', async (req, res) => {
@@ -263,6 +263,30 @@ app.get('/chat/:memberIdTo/:memberfrom', async (req, res) => {
         const chats = await chat.getChatsByRecipient(parseInt(memberIdTo), parseInt(memberfrom));
         console.log(chats)
         res.json(chats);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+///////////////////------STATS--------//////////////////////////
+
+// Route to get the projects and tasks ratio
+app.get('/api/stats/projects-tasks-ratio', async (req, res) => {
+    try {
+        const { totalProjects, totalTasks, ratio } = await stats.getProjectsAndTasksRatio();
+        res.json({ totalProjects, totalTasks, ratio });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to get the total number of idle members
+app.get('/api/stats/idle-members', async (req, res) => {
+    try {
+        const { totalMembers, totalIdleMembers } = await stats.getIdleMembers();
+        res.json({ totalMembers, totalIdleMembers });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
