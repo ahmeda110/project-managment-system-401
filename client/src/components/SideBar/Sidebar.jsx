@@ -27,8 +27,33 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth0();
-  const [userName, setUserName] = useState("");
-  const [memberId, setMemberId] = useState("");
+  const [userName, setUserName] = useState(
+    localStorage.getItem("userName") || ""
+  );
+  const [memberId, setMemberId] = useState(
+    localStorage.getItem("memberId") || ""
+  );
+
+  const getuserPermission = async () => {
+    const email = user?.email;
+    const emailResponse = await axios.get(`/api/members/email/${email}`);
+    const memberId = emailResponse.data.memberId;
+
+    if (memberId) {
+      axios
+        .get(`http://localhost:3100/api/members/${memberId}`)
+        .then((result) => {
+          let role = "memeber"
+          if(result.data.permission) role = result.data.permission
+          localStorage.setItem("role", role)
+        })
+        .catch((err) => console.error(err));
+    }
+  };
+
+  useEffect(() => {
+    if (user) getuserPermission();
+  }, [user]);
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -37,50 +62,60 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         const emailResponse = await axios.get(`/api/members/email/${email}`);
         const memberId = emailResponse.data.memberId;
         setMemberId(memberId);
-  
-        const memberNameResponse = await axios.get(`/api/members/${memberId}/name`);
+        localStorage.setItem("memberId", memberId);
+
+        const memberNameResponse = await axios.get(
+          `/api/members/${memberId}/name`
+        );
         const memberName = memberNameResponse.data.name;
         setUserName(memberName);
+        localStorage.setItem("userName", memberName);
       } catch (error) {
-        console.error('Error fetching member data:', error);
+        console.error("Error fetching member data:", error);
         if (error.response) {
           await createNewMember();
         }
       }
     };
-  
+
     const createNewMember = async () => {
       try {
-        await axios.post("/api/members", { email: user.email, name: user.name });
+        await axios.post("/api/members", {
+          email: user.email,
+          name: user.name,
+        });
         await fetchMemberData();
       } catch (error) {
-        console.error('Error creating new member:', error);
+        console.error("Error creating new member:", error);
       }
     };
-  
+
     if (isAuthenticated && user) {
       fetchMemberData();
     }
-  }, [isAuthenticated, user]);  
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     const handleUsernameChange = async (event) => {
       try {
         if (user?.email && memberId) {
           const updatedUserName = event.detail;
-          const response = await axios.put(`/api/members/${memberId}`, { name: updatedUserName });
-          console.log('Username updated');
+          const response = await axios.put(`/api/members/${memberId}`, {
+            name: updatedUserName,
+          });
+          console.log("Username updated");
         }
         setUserName(event.detail);
+        localStorage.setItem("userName", event.detail);
       } catch (error) {
-        console.error('Error updating username:', error);
+        console.error("Error updating username:", error);
       }
     };
 
-    window.addEventListener('usernameUpdated', handleUsernameChange);
+    window.addEventListener("usernameUpdated", handleUsernameChange);
 
     return () => {
-      window.removeEventListener('usernameUpdated', handleUsernameChange);
+      window.removeEventListener("usernameUpdated", handleUsernameChange);
     };
   }, [user?.email, memberId]);
 
@@ -95,12 +130,21 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     navigate(subItemLink);
   };
 
+  const handleSignout = () => {
+    localStorage.removeItem("userName");
+    localStorage.removeItem("memberId");
+    logout();
+  };
+
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
         <div className="profile">
           {userName && userName.includes(" ") ? (
-            <>{userName.split(" ")[0][0]}{userName.split(" ")[1][0]}</>
+            <>
+              {userName.split(" ")[0][0]}
+              {userName.split(" ")[1][0]}
+            </>
           ) : (
             <>{userName?.[0]}</>
           )}
@@ -147,7 +191,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         ))}
       </div>
       <div className="sign-out-container">
-        <div className="signout-item" onClick={logout}>
+        <div className="signout-item" onClick={handleSignout}>
           <FaSignOutAlt size={20} />
           <span className="signout-text">Signout</span>
         </div>

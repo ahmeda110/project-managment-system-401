@@ -9,6 +9,8 @@ import Login from "./components/Login/Login";
 import Projects from "./components/Projects/Projects";
 import Calendar from "./components/Calendar/Calendar";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 import "./App.css";
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
     clientId: 'SflGMkpeqfNqnNmKb822JJypqb7QOPKn',
     redirectUri: window.location.origin
   };
+
+  // const { user } = useAuth0();
 
 
   return (

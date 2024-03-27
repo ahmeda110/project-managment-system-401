@@ -176,6 +176,7 @@ app.put('/api/members/:id', async (req, res) => {
     try {
         const memberId = req.params.id;
         const updates = req.body;
+        console.log(updates)
         const updatedMember = await members.updateMember(memberId, updates);
         res.json(updatedMember);
     } catch (error) {
@@ -199,6 +200,7 @@ app.get('/api/members/:id', async (req, res) => {
     try {
         const memberId = req.params.id;
         const memberDetails = await members.getMemberById(memberId);
+        console.log(memberId)
         res.json(memberDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
