@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../SideBar/Sidebar";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { MdEditDocument } from "react-icons/md";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { IoIosCloseCircle } from "react-icons/io";
+import { CiLink } from "react-icons/ci";
 
 import "../../assets/styles/Dashboard.css";
 import "../../assets/styles/Modal.css";
@@ -13,6 +14,7 @@ import TaskSideBar from "../Common/TaskSideBar";
 
 function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const getAllTasks = () => {
     axios
@@ -21,6 +23,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         setInitialTasks(result.data);
       })
       .catch((err) => console.error(err));
+      setProjectName("");
   };
 
   const getTaskByProject = () => {
@@ -32,10 +35,25 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       .catch((err) => console.error(err));
   };
 
+  const getprojectName = (id, setName) => {
+    axios
+    .get(`http://localhost:3100/api/project/name/${id}`)
+    .then((result) => {
+      console.log(result.data)
+      if(setName) {
+        setProjectName(result.data + ": ");
+      }
+      return result.data
+    })
+    .catch((err) => console.error(err));
+  }
+
+  const [projectName, setProjectName] = useState("")
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
     if (!isNaN(id)) {
       getTaskByProject();
+      getprojectName(id, true);
     } else {
       getAllTasks();
     }
@@ -127,16 +145,19 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       const task = initialTasks[i];
       const assignedToName = await getMemberNameByID(task.assigned_to);
       const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
-      updatedTasks.push({ ...task, assignedToName, assignedToNameAlt });
+      const projectName = await getProjectName(task.project_id);
+      updatedTasks.push({ ...task, projectName, assignedToName, assignedToNameAlt });
     }
     setInitialTasks(updatedTasks);
+    console.log(updatedTasks)
   };
+
   
   useEffect(() => {
     if (initialTasks.length > 0) {
       getMemberNamesForTasks();
     }
-  }, [initialTasks]);
+  }, [id]);
   
   const getMemberNameByID = async (id) => {
     try {
@@ -145,6 +166,18 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         return response.data.name;
       }
       return "Unknown";
+    } catch (error) {
+      console.error(error);
+      return "Unknown";
+    }
+  };
+
+  const getProjectName = async (id) => {
+    try {
+      if (id) {
+        const response = await axios.get(`http://localhost:3100/api/project/name/${id}`);
+        return response.data;
+      }
     } catch (error) {
       console.error(error);
       return "Unknown";
@@ -163,7 +196,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         />
         <div className="content-container">
           <div className="content-header">
-            <div className="title">All Tasks</div>
+            <div className="title">{projectName}All Tasks</div>
             <AiFillPlusCircle
               size={40}
               style={{ cursor: "pointer" }}
@@ -178,7 +211,15 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   key={index}
                   onClick={() => handleTaskClick(task)}
                 >
+                  <div 
+                    style={{ display: "flex", alignitems: "center", columnGap: "5px", fontSize: "13px", marginBottom: "1em"}}
+                    onClick={(e) => { e.stopPropagation(); navigate(`/tasks/${task.project_id}`)}}
+                    >
+                  <CiLink size={22}/>
+                  {task.projectName}
+                  </div>
                   <div className="assignedTo-Title-div">
+                    
                     <div className="title">{task.name || task.title}</div>
                     <div className="assigned-to-container">
                       <div className="assigned-to">
@@ -328,7 +369,7 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
         setAllUsers(result.data);
       })
       .catch((err) => console.error(err));
-  }, [])
+  }, [allUsers])
 
   return (
     <div className="modal-overlay">

@@ -125,17 +125,16 @@ app.get('/api/tasks/project/:projectId', async (req, res) => {
 });
 
 // project name by id
-app.get('/project/:projectId', async (req, res) => {
-    const { projectId } = req.params;
+app.get('/api/project/name/:projectId', async (req, res) => {
     try {
-        const projectName = await getProjectNameById(projectId);
-        res.json({ projectName });
+        const projectId = req.params.projectId;
+        const projectName = await projects.getProjectNameById(projectId);
+        console.log(projectName)
+        res.json(projectName);
     } catch (error) {
         res.status(500).json({ error: 'Failed to get project name' });
     }
 });
-
-
 
 // Route to get tasks by member
 app.get('/api/tasks/member/:memberId', async (req, res) => {
