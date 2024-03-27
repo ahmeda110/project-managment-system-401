@@ -48,6 +48,10 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!newUsername.trim()) {
+      window.alert("Name cannot be empty!");
+      return;
+    }  
     try {
       const memberID = await getUserID();
 

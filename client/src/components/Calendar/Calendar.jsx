@@ -46,7 +46,13 @@ const Calendar = ({
       selectedDate.getMonth() + 1,
       0
     ).getDate();
-
+  
+    const firstDayOfWeek = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    ).getDay();
+  
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(
         selectedDate.getFullYear(),
@@ -63,14 +69,9 @@ const Calendar = ({
       });
       grid.push({ date, number: i, tasks: tasksForDay });
     }
-
-    const firstDayOfWeek = grid[0].date.getDay();
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      grid.unshift({ date: null, number: null, tasks: [] });
-    }
-
+  
     return grid;
-  };
+  };  
 
   const nextMonth = () => {
     setSelectedDate(
