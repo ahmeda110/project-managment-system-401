@@ -216,6 +216,17 @@ app.get('/api/members/:id/name', async (req, res) => {
     }
 });
 
+// Route to get member ID by email
+app.get('/api/members/:email', async (req, res) => {
+    try {
+        const email = req.params.email;
+        const memberId = await members.getMemberIdByEmail(email);
+        res.json({ memberId });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);

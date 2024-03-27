@@ -104,6 +104,23 @@ class Members {
         }
     }
     
+    async getMemberIdByEmail(email) {
+        try {
+            const { data: member, error } = await this.client
+                .from('member')
+                .select('member_id')
+                .eq('email', email)
+                .single();
+    
+            if (error) throw error;
+    
+            return member ? member.member_id : 0;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+    
     
 }
 
