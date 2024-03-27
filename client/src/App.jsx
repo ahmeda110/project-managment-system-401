@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate} from "react-router-dom";
 import { Auth0Provider } from '@auth0/auth0-react';
 import axios from "axios";
 
@@ -24,12 +24,18 @@ function App() {
     redirectUri: window.location.origin
   };
 
-  // const { user } = useAuth0();
-
+  const navigate = useNavigate();
+  const [isPageRefreshed, setIsPageRefreshed] = useState(true);
+  useEffect(() => {
+    // Redirect to /projects route on page load if user is authenticated
+    if (isPageRefreshed) {
+      setIsPageRefreshed(false);
+      navigate("/home");
+    }
+  }, [isPageRefreshed, navigate]);
 
   return (
     <Auth0Provider {...auth0Config}>
-      <BrowserRouter>
         <Routes>
           <Route 
             path="/"
@@ -58,7 +64,7 @@ function App() {
               <Calendar activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
             }
           ></Route>
-          <Route
+<Route
             path="/chat"
             element={
               <Chat activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
@@ -71,7 +77,6 @@ function App() {
             }
           ></Route>
         </Routes>
-      </BrowserRouter>
     </Auth0Provider>
   );
 }
