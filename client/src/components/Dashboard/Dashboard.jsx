@@ -249,22 +249,24 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   key={index}
                   onClick={() => handleTaskClick(task)}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignitems: "center",
-                      columnGap: "5px",
-                      fontSize: "13px",
-                      marginBottom: "1em",
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/tasks/${task.project_id}`);
-                    }}
-                  >
-                    <CiLink size={22} />
-                    {task.projectName}
-                  </div>
+                  {id === "all" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignitems: "center",
+                        columnGap: "5px",
+                        fontSize: "13px",
+                        marginBottom: "1em",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/tasks/${task.project_id}`);
+                      }}
+                    >
+                      <CiLink size={22} />
+                      {task.projectName}
+                    </div>
+                  )}
                   <div className="assignedTo-Title-div">
                     <div className="title">{task.name || task.title}</div>
                     <div className="assigned-to-container">
@@ -395,39 +397,38 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       index: task?.index,
     };
 
-    if(isAdding) {
+    if (isAdding) {
       axios
-      .post("http://localhost:3100/api/tasks", {
-        name: title,
-        description: description,
-        due_date: due,
-        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
-        priority,
-        assigned_to: assignedTo,
-        project_id: id,
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => console.error(err));
+        .post("http://localhost:3100/api/tasks", {
+          name: title,
+          description: description,
+          due_date: due,
+          status: status ? "TRUE" : "FALSE", // Where is `status` defined?
+          priority,
+          assigned_to: assignedTo,
+          project_id: id,
+        })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((err) => console.error(err));
     } else {
       axios
-      .put(`http://localhost:3100/api/tasks/${task.task_id}`, {
-        name: title,
-        description: description,
-        due_date: due,
-        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
-        priority,
-        assigned_to: assignedTo,
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => console.error(err));
+        .put(`http://localhost:3100/api/tasks/${task.task_id}`, {
+          name: title,
+          description: description,
+          due_date: due,
+          status: status ? "TRUE" : "FALSE", // Where is `status` defined?
+          priority,
+          assigned_to: assignedTo,
+        })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((err) => console.error(err));
     }
 
     onUpdate(taskData);
-    
   };
 
   const [allUsers, setAllUsers] = useState([]);

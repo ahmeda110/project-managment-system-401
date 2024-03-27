@@ -85,7 +85,7 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         setActiveTab={setActiveTab}
         setActiveSubTab={setActiveSubTab}
       />
-      <div className="content-container">
+      <div className="content-container" style={{ overflowY: "auto" }}>
         <div className="content-header">
           <div className="title">Home</div>
         </div>
@@ -108,16 +108,10 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           </div>
         </div>
         <div className="visuals-container">
-          <div
-            className="donught-container"
-    
-          >
+          <div className="donught-container">
             <canvas id="doughnutChart" width="400" height="200"></canvas>
           </div>
-          <div
-            className="chart-container"
-
-          >
+          <div className="chart-container">
             <canvas id="lineChart" width="400" height="200"></canvas>
           </div>
         </div>
