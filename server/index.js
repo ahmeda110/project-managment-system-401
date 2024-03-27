@@ -199,6 +199,7 @@ app.get('/api/members/:id', async (req, res) => {
     try {
         const memberId = req.params.id;
         const memberDetails = await members.getMemberById(memberId);
+        console.log(memberId)
         res.json(memberDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });

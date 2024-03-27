@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../SideBar/Sidebar";
+
+import { useAuth0 } from "@auth0/auth0-react";
 
 import "../../assets/styles/Account.css";
 
@@ -15,11 +17,51 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const handleEmailChange = (e) => setNewEmail(e.target.value);
   const handleNewPermissionChange = (e) => setNewPermission(e.target.value);
 
+  const { user } = useAuth0();
+
+  const getUserID = async() => {
+    const email = user?.email;
+    const emailResponse = await axios.get(`/api/members/email/${email}`);
+    const memberId = emailResponse.data.memberId;
+
+    return memberId;
+  }
+
+  useEffect(() => {
+    const fetchMemberID = async () => {
+      try {
+        const memberID = await getUserID();
+        console.log(memberID);
+  
+        const result = await axios.get(`http://localhost:3100/api/members/${memberID}`);
+          setNewUsername(result.data.name || "");
+          setNewPhoneNumber(result.data.phone_number || "")
+          setNewEmail(result.data.email || "");
+          setNewPermission(result.data.permission || "")
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  
+    fetchMemberID();
+  }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-
     try {
+      const memberID = await getUserID();
+
+      axios
+      .put(`http://localhost:3100/api/members/${memberID}`, {
+        name: newUsername,
+        phone_number: newPhoneNumber,
+        email: newEmail,
+        permission: newPermission
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.error(err));
 
       const event = new CustomEvent("usernameUpdated", { detail: newUsername });
       window.dispatchEvent(event);
@@ -75,6 +117,7 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     <input
                       type="text"
                       id="newUsername"
+                      maxLength={10}
                       value={newPhoneNumber}
                       onChange={handlePhoneNumberChange}
                       className="form-control"
@@ -99,10 +142,10 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       onChange={handleNewPermissionChange}
                       style={{height: "50px"}}
                     >
-                      <option value="member">Select a role</option>
+                      <option value="">Select a role</option>
                       <option value="member">Member</option>
-                      <option value="member">Admin</option>
-                      <option value="member">Leader</option>
+                      <option value="admin">Admin</option>
+                      <option value="leader">Leader</option>
                     </select>
                   </div>
                 </div>
