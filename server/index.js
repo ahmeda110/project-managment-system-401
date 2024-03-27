@@ -72,8 +72,8 @@ app.delete('/api/tasks/:id', async (req, res) => {
 // Route to create a project
 app.post('/api/projects', async (req, res) => {
     try {
-        const { name, description, leader } = req.body;
-        const newProject = await projects.createProject(name, description, leader);
+        const { name, description } = req.body;
+        const newProject = await projects.createProject(name, description);
         res.json(newProject);
     } catch (error) {
         res.status(500).json({ error: error.message });

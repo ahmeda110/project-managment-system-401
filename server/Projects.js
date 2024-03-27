@@ -6,11 +6,11 @@ class Projects {
     this.client = this.supabaseConnector.getSupabaseClient();
   }
 
-  async createProject(name, description, leader) {
+  async createProject(name, description) {
     try {
         const { data, error } = await this.client
             .from('project')
-            .insert({ name, description, leader })
+            .insert({ name, description })
             .single();
         if (error) throw error;
         return data;
