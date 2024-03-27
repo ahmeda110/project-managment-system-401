@@ -126,7 +126,6 @@ const Chat = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
                       <div className="message-content">
                         <div className="message-details">
                           <span className="sender">{message.sender}</span>
-                          
                         </div>
                         <div className="message-text">{message.content}</div>
                       </div>
@@ -139,13 +138,22 @@ const Chat = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
                   ))}
                 </div>
 
-                <div className="input-container">
+                <div className="input-container" style={{ maxWidth: "40%" }}>
                   <input
                     type="text"
                     className="input"
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    style={{ maxWidth: "80%" }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        console.log("hit enter, sending");
+                        // Checks if the Enter key is pressed without holding the Shift key
+                        e.preventDefault(); // Prevents the default action of the Enter key which is usually form submission or line break in textarea
+                        handleMessageSend(); // Calls your function to send the message
+                      }
+                    }}
                   />
                   <button onClick={handleMessageSend}>Send</button>
                 </div>
