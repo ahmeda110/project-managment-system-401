@@ -7,6 +7,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { PiProjectorScreenFill } from "react-icons/pi";
 import { FaCalendar } from "react-icons/fa";
 import { FaBorderAll } from "react-icons/fa6";
+import { BsChatRightFill } from "react-icons/bs";
+
 import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
@@ -22,7 +24,9 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         "All Tasks": { icon: <FaBorderAll size={18} />, link: "/tasks/all" },
       },
     },
-    Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
+    "Chat": { icon: <BsChatRightFill size={16} style={{marginRight: "4px"}} />, link: "/chat" },
+    "Account": { icon: <RiAccountBoxFill size={20} />, link: "/account" },
+    
   };
 
   const navigate = useNavigate();
