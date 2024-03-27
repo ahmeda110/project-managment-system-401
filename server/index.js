@@ -217,7 +217,7 @@ app.get('/api/members/:id/name', async (req, res) => {
 });
 
 // Route to get member ID by email
-app.get('/api/members/:email', async (req, res) => {
+app.get('/api/members/email/:email', async (req, res) => {
     try {
         const email = req.params.email;
         const memberId = await members.getMemberIdByEmail(email);

@@ -10,9 +10,17 @@ import { PiProjectorScreenFill } from "react-icons/pi";
 import { FaCalendar } from "react-icons/fa";
 import { FaBorderAll } from "react-icons/fa6";
 
+import axios from "axios";
+
 import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth0();
+  const [openCategory, setOpenCategory] = useState(null);
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
+  const [memberId, setMemberId] = useState("");
+
   const navigationItems = {
     "All Projects": {
       icon: <PiProjectorScreenFill size={18} />,
@@ -27,9 +35,6 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     },
     Account: { icon: <RiAccountBoxFill size={20} />, link: "/account" },
   };
-
-  const navigate = useNavigate();
-  const [openCategory, setOpenCategory] = useState(null);
 
   const handleItemClick = (itemName, itemLink) => {
     if (itemName === "All Projects" && openCategory !== itemName) {
@@ -46,14 +51,48 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setActiveSubTab(subItemName);
     navigate(subItemLink);
   };
-  const { user, isAuthenticated, logout } = useAuth0();
-  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
-  const [userPicture, setUserPicture] = useState("");
 
   const updateUserNameFromStorage = (email) => {
     const savedUserName = localStorage.getItem(email);
     setUserName(savedUserName || email);
   };
+
+  useEffect(() => {
+    const fetchMemberId = async () => {
+      try {
+        const response = await axios.get(`/api/members/email/${user.email}`);
+        console.log('Response:', response);
+        setMemberId(response.data.memberId);
+
+        const memberNameResponse = await axios.get(`/api/members/${response.data.memberId}/name`);
+        console.log('Member Name Response:', memberNameResponse);
+        const memberName = memberNameResponse.data.name;
+        console.log('Member Name:', memberName);
+      } catch (error) {
+        console.error('Error fetching member ID:', error);
+        if (error.response) {
+          // If email not found, create a new member
+          try {
+            const response = await axios.post("/api/members", { email: user.email, name: user.name });
+            const memberId = response.data.memberId;
+            setMemberId(memberId);
+
+            const memberNameResponse = await axios.get(`/api/members/${memberId}/name`);
+            const memberName = memberNameResponse.data.name;
+            setUserName(memberName);
+          } catch (error) {
+            console.error('Error creating new member:', error);
+          }
+        }
+      }
+    };
+
+    if (isAuthenticated && user) {
+      fetchMemberId();
+      localStorage.setItem("userEmail", user.email);
+      setUserName(user.email);
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     const handleUsernameChange = (event) => {
