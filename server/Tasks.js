@@ -40,7 +40,7 @@ class Tasks {
             const { data, error } = await this.client
                 .from('task')
                 .update(updates)
-                .match({ id })
+                .match({ task_id: id }) // Use the id parameter here
                 .single();
             if (error) throw error;
             return data;
