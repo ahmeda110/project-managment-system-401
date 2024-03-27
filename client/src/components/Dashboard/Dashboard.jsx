@@ -19,7 +19,6 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       .get("http://localhost:3100/api/tasks")
       .then((result) => {
         setInitialTasks(result.data);
-        console.log(result.data);
       })
       .catch((err) => console.error(err));
   };
@@ -29,12 +28,9 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       .get(`http://localhost:3100/api/tasks/project/${id}`)
       .then((result) => {
         setInitialTasks(result.data);
-        console.log(result.data);
       })
       .catch((err) => console.error(err));
   };
-
-  const isNumber = !isNaN("2");
 
   const [initialTasks, setInitialTasks] = useState([]);
   useEffect(() => {
@@ -43,7 +39,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     } else {
       getAllTasks();
     }
-  }, []);
+  }, [id]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState({
@@ -51,8 +47,8 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     description: "",
     due: "",
     status: false,
-    priority: "", // New state variable for priority
-    assignedTo: "", // New state variable for assigned to
+    priority: "",
+    assignedTo: "",
   });
   const [isAddingTask, setIsAddingTask] = useState(false);
 
@@ -77,10 +73,8 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const handleTaskUpdate = (updatedTask) => {
     if (isAddingTask) {
-      // Handle adding a new task
       setInitialTasks([...initialTasks, { ...updatedTask, status: false }]);
     } else {
-      // Handle updating an existing task
       const newTasks = initialTasks.map((task, idx) =>
         idx === updatedTask.index ? { ...task, ...updatedTask } : task
       );
@@ -98,8 +92,8 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       description: "",
       due: "",
       status: false,
-      priority: "", // Initialize priority
-      assignedTo: "", // Initialize assigned to
+      priority: "",
+      assignedTo: "",
       index: initialTasks.length,
     });
   };
@@ -119,7 +113,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingTask(null);
-    setIsAddingTask(false); // Reset the adding task flag
+    setIsAddingTask(false);
   };
 
   const handleTaskClick = (task) => {
@@ -127,26 +121,34 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     setIsSideMenuOpen(true);
   };
 
+  const getMemberNamesForTasks = async () => {
+    const updatedTasks = [];
+    for (let i = 0; i < initialTasks.length; i++) {
+      const task = initialTasks[i];
+      const assignedToName = await getMemberNameByID(task.assigned_to);
+      const assignedToNameAlt = await getMemberNameByID(task.assignedTo);
+      updatedTasks.push({ ...task, assignedToName, assignedToNameAlt });
+    }
+    setInitialTasks(updatedTasks);
+  };
+  
+  useEffect(() => {
+    if (initialTasks.length > 0) {
+      getMemberNamesForTasks();
+    }
+  }, [initialTasks]);
+  
   const getMemberNameByID = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
-      return response.data.name;
+      if (id) {
+        const response = await axios.get(`http://localhost:3100/api/members/${id}/name`);
+        return response.data.name;
+      }
+      return "Unknown";
     } catch (error) {
       console.error(error);
-      return "Unknown"; // Return a default value in case of error
+      return "Unknown";
     }
-  }
-
-  const AsyncComponent = ({ promise }) => {
-    const [data, setData] = useState(null);
-  
-    useEffect(() => {
-      promise.then((resolvedData) => {
-        setData(resolvedData);
-      });
-    }, [promise]);
-  
-    return <>{data}</>;
   };
 
   return (
@@ -181,12 +183,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                     <div className="assigned-to-container">
                       <div className="assigned-to">
                         <div className="dot"></div>
-                        {task.assigned_to && (
-  <AsyncComponent promise={getMemberNameByID(task.assigned_to)} />
-)}
-{task.assignedTo && (
-  <AsyncComponent promise={getMemberNameByID(task.assignedTo)} />
-)}
+                        <span>{task.assignedToName || task.assignedToNameAlt || "loading"}</span>
                       </div>
                     </div>
                   </div>
@@ -305,13 +302,13 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       index: task?.index,
     };
     onUpdate(taskData);
-
+  
     axios
       .post("http://localhost:3100/api/tasks", {
         name: title,
         description: description,
         due_date: due,
-        status: status ? "TRUE" : "FALSE", // needed for supabase for some reason
+        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
         priority,
         assigned_to: assignedTo,
         project_id: id,
@@ -321,6 +318,17 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       })
       .catch((err) => console.error(err));
   };
+
+  const [allUsers, setAllUsers] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3100/api/members`)
+      .then((result) => {
+        console.log(result.data)
+        setAllUsers(result.data);
+      })
+      .catch((err) => console.error(err));
+  }, [])
 
   return (
     <div className="modal-overlay">
@@ -384,9 +392,9 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
               onChange={(e) => setAssignedTo(e.target.value)}
             >
               <option value="">Select Assignee</option>
-              <option value="1">John Doe</option>
-              <option value="2">Jane Smith</option>
-              <option value="3">David Johnson</option>
+              {allUsers && allUsers.map((val) => (
+                <option value={val.member_id}>{val.name}</option>
+              ))}
             </select>
           </div>
 
