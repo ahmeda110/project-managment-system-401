@@ -394,9 +394,9 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       assignedTo,
       index: task?.index,
     };
-    onUpdate(taskData);
 
-    axios
+    if(isAdding) {
+      axios
       .post("http://localhost:3100/api/tasks", {
         name: title,
         description: description,
@@ -410,6 +410,24 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
         console.log(result);
       })
       .catch((err) => console.error(err));
+    } else {
+      axios
+      .put(`http://localhost:3100/api/tasks/${task.task_id}`, {
+        name: title,
+        description: description,
+        due_date: due,
+        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
+        priority,
+        assigned_to: assignedTo,
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.error(err));
+    }
+
+    onUpdate(taskData);
+    
   };
 
   const [allUsers, setAllUsers] = useState([]);

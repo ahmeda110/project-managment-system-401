@@ -8,6 +8,7 @@ import Account from "./components/Account/Account";
 import Login from "./components/Login/Login";
 import Projects from "./components/Projects/Projects";
 import Calendar from "./components/Calendar/Calendar";
+import Chat from "./components/Chat/Chat";
 
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -56,7 +57,12 @@ function App() {
               <Calendar activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
             }
           ></Route>
-
+          <Route
+            path="/chat"
+            element={
+              <Chat activeTab={activeTab} activeSubTab={activeSubTab} setActiveTab={setActiveTab} setActiveSubTab={setActiveSubTab} />
+            }
+          ></Route>
         </Routes>
       </BrowserRouter>
     </Auth0Provider>

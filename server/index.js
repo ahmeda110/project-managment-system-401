@@ -65,10 +65,6 @@ app.delete('/api/tasks/:id', async (req, res) => {
 });
 
 
-
-
-
-
 // Route to create a project
 app.post('/api/projects', async (req, res) => {
     try {
