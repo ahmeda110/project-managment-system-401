@@ -12,7 +12,7 @@ function Login() {
     useEffect(() => {
         if (isAuthenticated) {
             console.log(user);
-            navigate('/projects');
+            navigate('/home');
         }
     }, [isAuthenticated, navigate]);
 
