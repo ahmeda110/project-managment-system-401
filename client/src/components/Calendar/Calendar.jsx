@@ -52,7 +52,13 @@ const Calendar = ({
       selectedDate.getMonth(),
       1
     ).getDay();
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      grid.push({ day: null, number: null, tasks: [] });
+    }
+
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(
         selectedDate.getFullYear(),
@@ -67,7 +73,7 @@ const Calendar = ({
           taskDate.getFullYear() === selectedDate.getFullYear()
         );
       });
-      grid.push({ date, number: i, tasks: tasksForDay });
+      grid.push({ day: null, number: i, tasks: tasksForDay });
     }
   
     return grid;
@@ -100,7 +106,6 @@ const Calendar = ({
           setActiveTab={setActiveTab}
           setActiveSubTab={setActiveSubTab}
         />
-
         <div className="content-calendar-container">
           <div className="calendar-header">
             <div>
@@ -117,30 +122,25 @@ const Calendar = ({
             </div>
           </div>
           <div className="calendar-grid">
-            {generateCalendarGrid().map((day) => (
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName, index) => (
+              <div key={index} className="calendar-day day-name">
+                {dayName}
+              </div>
+            ))}
+            {generateCalendarGrid().map((day, index) => (
               <div
-                key={day.date}
+                key={index}
                 className="calendar-day"
                 onClick={() => onDayClicked(day)}
                 style={{ cursor: day.tasks.length > 0 ? "pointer" : "default" }}
               >
-                <div
-                  className="day-number"
-                  style={
-                    day.tasks.length
-                      ? { fontWeight: "bold", color: "white" }
-                      : {}
-                  }
-                >
-                  {day.number}
-                </div>
-
+                {day.number !== null ? (
+                  <div className="day-number" style={day.tasks.length ? { fontWeight: "bold", color: "white" } : {}}>
+                    {day.number}
+                  </div>
+                ) : null}
                 {day.tasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="task-bar"
-                    //onClick={() => handleTaskClick(task)}
-                  >
+                  <div key={task.id} className="task-bar">
                     {task.name}
                   </div>
                 ))}
