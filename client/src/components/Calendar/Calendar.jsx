@@ -52,7 +52,13 @@ const Calendar = ({
       selectedDate.getMonth(),
       1
     ).getDay();
+    
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      grid.push({ day: null, number: null, tasks: [] });
+    }
+
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(
         selectedDate.getFullYear(),
