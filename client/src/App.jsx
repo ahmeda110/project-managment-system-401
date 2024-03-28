@@ -28,10 +28,12 @@ function App() {
   const [isPageRefreshed, setIsPageRefreshed] = useState(true);
   useEffect(() => {
     // Redirect to /projects route on page load if user is authenticated
-    if (isPageRefreshed) {
+    const isSignOut = localStorage.getItem("signout")
+    if (isPageRefreshed && !isSignOut) {
       setIsPageRefreshed(false);
       navigate("/home");
     }
+    localStorage.setItem("signout", false)
   }, [isPageRefreshed, navigate]);
 
   return (

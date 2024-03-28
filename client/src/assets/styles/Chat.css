@@ -12,10 +12,11 @@
     padding: 2em;
     background: rgb(70, 70, 70);
     max-width: 300px;
-    overflow-y: auto;
+
     border-radius: 10px;
 
     width: 30%;
+    overflow-y: hidden !important;
   }
   
   .user-list h2 {
@@ -100,7 +101,7 @@
   }
 
   .input-container .input {
-    width: 87%;
+    width: 86%;
     background: #2b2b2b;
     border: none;
     color: white;

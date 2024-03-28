@@ -139,6 +139,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const handleSignout = () => {
     localStorage.removeItem("userName");
     localStorage.removeItem("memberId");
+    localStorage.setItem("signout", true);
     logout();
   };
 

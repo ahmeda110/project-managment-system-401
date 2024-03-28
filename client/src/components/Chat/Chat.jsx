@@ -145,7 +145,7 @@ const Chat = ({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) => {
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    style={{ maxWidth: "80%" }}
+                  
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         console.log("hit enter, sending");
