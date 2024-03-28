@@ -127,16 +127,17 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   const handleTaskUpdate = (updatedTask) => {
     if (isAddingTask) {
-      setInitialTasks([...initialTasks, { ...updatedTask, status: false }]);
+        setInitialTasks([...initialTasks, { ...updatedTask, status: false }]);
     } else {
-      const newTasks = initialTasks.map((task, idx) =>
-        idx === updatedTask.index ? { ...task, ...updatedTask } : task
-      );
-      setInitialTasks(newTasks);
+        const newTasks = initialTasks.map((task) => {
+            return task.task_id === updatedTask.task_id ? updatedTask : task;
+        });
+        setInitialTasks(newTasks);
     }
 
     closeModal();
-  };
+};
+
 
   const handleAddTaskClick = () => {
     setIsModalOpen(true);
@@ -262,21 +263,21 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/tasks/${task.project_id}`);
+                        navigate(`/tasks/${task?.project_id}`);
                       }}
                     >
                       <CiLink size={22} />
-                      {task.projectName}
+                      {task?.projectName}
                     </div>
                   )}
                   <div className="assignedTo-Title-div">
-                    <div className="title">{task.name || task.title}</div>
+                    <div className="title">{task?.name || task?.title}</div>
                     <div className="assigned-to-container">
                       <div className="assigned-to">
                         <div className="dot"></div>
                         <span>
-                          {task.assignedToName ||
-                            task.assignedToNameAlt ||
+                          {task?.assignedToName ||
+                            task?.assignedToNameAlt ||
                             "loading"}
                         </span>
                       </div>
@@ -284,11 +285,11 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   </div>
 
                   <div className="description">
-                    <span style={{ color: "#7f7f7f" }}>{task.description}</span>
+                    <span style={{ color: "#7f7f7f" }}>{task?.description}</span>
                   </div>
                   <div className="date">
                     <span style={{ fontWeight: "bold" }}>Due Date: </span>{" "}
-                    {task.due_date || task.due}
+                    {task?.due_date || task?.due}
                   </div>
                   {/* Display priority */}
 
@@ -304,14 +305,14 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       <div
                         className="status"
                         style={{
-                          background: task.status ? "limegreen" : "red",
+                          background: task?.status ? "limegreen" : "red",
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleStatusChange(index);
                         }}
                       >
-                        {task.status ? "Completed" : "Incomplete"}
+                        {task?.status ? "Completed" : "Incomplete"}
                       </div>
                       <div
                         className="status"
@@ -321,7 +322,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                           fontWeight: "bold",
                         }}
                       >
-                        Priority - {task.priority}
+                        Priority - {task?.priority}
                       </div>
                     </div>
 
@@ -383,6 +384,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 function Modal({ task, onUpdate, onClose, isAdding }) {
   console.log("task:", task);
   console.log("isAdding:", isAdding);
+  const task_id = task.task_id;
   const [title, setTitle] = useState(task?.name || "");
   const [description, setDescription] = useState(task?.description || "");
   const [due, setDue] = useState(task?.due_date || "");
@@ -393,6 +395,7 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const taskData = {
+      task_id,
       title,
       description,
       due,
@@ -400,6 +403,7 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       assignedTo,
       index: task?.index,
     };
+    onUpdate(taskData);
 
     if (isAdding) {
       axios
@@ -431,8 +435,6 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
         })
         .catch((err) => console.error(err));
     }
-
-    onUpdate(taskData);
   };
 
   const [allUsers, setAllUsers] = useState([]);
