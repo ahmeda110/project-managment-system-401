@@ -98,6 +98,45 @@ class Stats {
             throw error;
         }
     }
+
+    async  getTasksPerMonth() {
+        try {
+            const supabaseConnector = SupabaseConnector.getInstance();
+            const client = supabaseConnector.getSupabaseClient();
+    
+            // Query the task table to retrieve due dates of tasks
+            const { data: tasks, error } = await client
+                .from('task')
+                .select('due_date');
+    
+            if (error) {
+                throw error;
+            }
+    
+            // Initialize an object to store the count of tasks completed in each month
+            const tasksPerMonth = {};
+    
+            // Loop through the tasks to extract the month and count tasks for each month
+            tasks.forEach(task => {
+                const dueDate = new Date(task.due_date);
+                const month = dueDate.toLocaleString('en-US', { month: 'long' });
+                const year = dueDate.getFullYear();
+    
+                // Create a key in the tasksPerMonth object if it doesn't exist
+                if (!tasksPerMonth[`${year}-${month}`]) {
+                    tasksPerMonth[`${year}-${month}`] = 0;
+                }
+    
+                // Increment the count of tasks for the respective month
+                tasksPerMonth[`${year}-${month}`]++;
+            });
+    
+            return tasksPerMonth;
+        } catch (error) {
+            console.error('Error:', error.message);
+            throw error;
+        }
+    }
     
     
 
