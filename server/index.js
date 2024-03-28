@@ -292,6 +292,19 @@ app.get('/stats/task-status', async (req, res) => {
     }
 });
 
+// Define the route for fetching tasks per month
+app.get('/tasks-per-month', async (req, res) => {
+    try {
+        // Call the getTasksPerMonth function to fetch tasks per month
+        const tasksPerMonth = await stats.getTasksPerMonth();
+        res.json(tasksPerMonth); // Send the tasks per month as JSON response
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: 'Internal server error' }); // Send an error response if an error occurs
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
