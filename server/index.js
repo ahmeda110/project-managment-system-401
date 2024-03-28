@@ -272,21 +272,21 @@ app.get('/chat/:memberIdTo/:memberfrom', async (req, res) => {
 
 ///////////////////------STATS--------//////////////////////////
 
-// Route to get the projects and tasks ratio
-app.get('/api/stats/projects-tasks-ratio', async (req, res) => {
+// Endpoint to get project, task, and member statistics
+app.get('/stats/project-task-member', async (req, res) => {
     try {
-        const { totalProjects, totalTasks, ratio } = await stats.getProjectsAndTasksRatio();
-        res.json({ totalProjects, totalTasks, ratio });
+        const projectTaskMemberStats = await stats.getProjectTaskMemberStats();
+        res.json(projectTaskMemberStats);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Route to get the total number of idle members
-app.get('/api/stats/idle-members', async (req, res) => {
+// Endpoint to get task status (total tasks, completed tasks, uncompleted tasks)
+app.get('/stats/task-status', async (req, res) => {
     try {
-        const { totalMembers, totalIdleMembers } = await stats.getIdleMembers();
-        res.json({ totalMembers, totalIdleMembers });
+        const tasksStatus = await stats.getTasksStatus();
+        res.json(tasksStatus);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -6,7 +6,7 @@ class Stats {
         this.client = this.supabaseConnector.getSupabaseClient();
     }
 
-    async getProjectsAndTasksRatio() {
+    async getProjectTaskMemberStats() {
         try {
             // Get total projects
             const { data: projects, error: projectsError } = await this.client
@@ -24,20 +24,24 @@ class Stats {
     
             const totalTasks = allTasks.length;
     
-            // Calculate completed and uncompleted tasks
-            const completedTasks = allTasks.filter(task => task.status === 'Completed').length;
-            const uncompletedTasks = totalTasks - completedTasks;
+            // Get total members
+            const { data: allMembers, error: membersError } = await this.client
+                .from('member')
+                .select('*');
+            if (membersError) throw membersError;
     
-            // Calculate ratio
-            const ratio = totalProjects / totalTasks;
+            const totalMembers = allMembers.length;
     
-            return { totalProjects, totalTasks, completedTasks, uncompletedTasks, ratio };
+            // Get total idle members
+            const { totalIdleMembers } = await this.getIdleMembers();
+    
+            return { totalProjects, totalTasks, totalMembers, totalIdleMembers };
         } catch (error) {
             console.error("Error:", error.message);
             throw error;
         }
     }
-    
+
     async getIdleMembers() {
         try {
             // Get all members assigned to tasks
@@ -61,15 +65,42 @@ class Stats {
             const allMemberIds = allMembers.map(member => member.member_id);
 
             // Calculate idle members
-            const totalMembers = allMemberIds.length;
             const totalIdleMembers = allMemberIds.filter(memberId => !assignedMemberIds.includes(memberId)).length;
 
-            return { totalMembers, totalIdleMembers };
+            return { totalIdleMembers };
         } catch (error) {
             console.error("Error:", error.message);
             throw error;
         }
     }
+
+    async getTasksStatus() {
+        try {
+            // Query tasks table to retrieve completed tasks
+            const { data: allTasks, error } = await this.client
+                .from('task')
+                .select('*');
+        
+            if (error) throw error;
+    
+            // Calculate total number of tasks
+            const totalTasks = allTasks.length;
+    
+            // Count completed tasks
+            const completedTasks = allTasks.filter(task => task.status === true).length;
+    
+            // Calculate uncompleted tasks
+            const uncompletedTasks = totalTasks - completedTasks;
+    
+            return { totalTasks, completedTasks, uncompletedTasks };
+        } catch (error) {
+            console.error('Error:', error.message);
+            throw error;
+        }
+    }
+    
+    
+
 }
 
 module.exports = Stats;
