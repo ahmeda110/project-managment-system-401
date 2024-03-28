@@ -53,6 +53,8 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       existingChart.destroy();
     }
 
+    console.log("taskStatus", taskStatus);
+
     new Chart(ctx, {
       type: "doughnut",
       data: {
@@ -61,8 +63,8 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
           {
             label: "Tasks Overview",
             data: [
-              taskStatus?.tasksCompleted ?? 1,
-              taskStatus?.tasksUncompleted ?? 1,
+              taskStatus?.completedTasks ?? 1,
+              taskStatus?.uncompletedTasks ?? 1,
             ],
             backgroundColor: ["#36A2EB", "#FF6384"],
             borderWidth: 0,
@@ -118,7 +120,7 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
 
   useEffect(() => {
     createDoughnutChart();
-  }, []);
+  }, [taskStatus]);
 
   return (
     <div className="dashboard-container">
