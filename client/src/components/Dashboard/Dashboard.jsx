@@ -333,21 +333,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       }}
                     >
                       {role === "admin" && (
-                        <MdEditDocument
-                          size={26}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditClick(index);
-                          }}
-                        />
+                        <>
+                          <MdEditDocument
+                            size={26}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(index);
+                            }}
+                          />
+                          <RiDeleteBin2Fill
+                            size={26}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTask(index, task.task_id);
+                            }}
+                          />
+                        </>
                       )}
-                      <RiDeleteBin2Fill
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTask(index, task.task_id);
-                        }}
-                      />
                     </div>
                   </div>
                 </div>
