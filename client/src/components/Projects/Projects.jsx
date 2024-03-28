@@ -132,6 +132,7 @@ const Projects = ({
                       cursor: "pointer",
                     }}
                   >
+                    {role == "admin" && (
                     <RiDeleteBin2Fill
                       size={26}
                       onClick={(e) => {
@@ -139,6 +140,7 @@ const Projects = ({
                         handleDeleteTask(index, project.project_id);
                       }}
                     />
+                    )}
                   </div>
                 </div>
               ))}

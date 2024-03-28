@@ -69,6 +69,7 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       const event = new CustomEvent("usernameUpdated", { detail: newUsername });
       window.dispatchEvent(event);
 
+      localStorage.setItem('role', newPermission);
       
     } catch (error) {
       console.error("Error updating profile:", error);
