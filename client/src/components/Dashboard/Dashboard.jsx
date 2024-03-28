@@ -67,11 +67,13 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   };
 
   const getprojectName = (id, setName) => {
+    console.log(id)
     axios
       .get(`http://localhost:3100/api/project/name/${id}`)
       .then((result) => {
         console.log(result.data);
         if (setName) {
+          console.log(result.data)
           setProjectName(result.data + ": ");
         }
         return result.data;
@@ -249,22 +251,24 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                   key={index}
                   onClick={() => handleTaskClick(task)}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignitems: "center",
-                      columnGap: "5px",
-                      fontSize: "13px",
-                      marginBottom: "1em",
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/tasks/${task.project_id}`);
-                    }}
-                  >
-                    <CiLink size={22} />
-                    {task.projectName}
-                  </div>
+                  {id === "all" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignitems: "center",
+                        columnGap: "5px",
+                        fontSize: "13px",
+                        marginBottom: "1em",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/tasks/${task.project_id}`);
+                      }}
+                    >
+                      <CiLink size={22} />
+                      {task.projectName}
+                    </div>
+                  )}
                   <div className="assignedTo-Title-div">
                     <div className="title">{task.name || task.title}</div>
                     <div className="assigned-to-container">
@@ -329,21 +333,23 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
                       }}
                     >
                       {role === "admin" && (
-                        <MdEditDocument
-                          size={26}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditClick(index);
-                          }}
-                        />
+                        <>
+                          <MdEditDocument
+                            size={26}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(index);
+                            }}
+                          />
+                          <RiDeleteBin2Fill
+                            size={26}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTask(index, task.task_id);
+                            }}
+                          />
+                        </>
                       )}
-                      <RiDeleteBin2Fill
-                        size={26}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTask(index, task.task_id);
-                        }}
-                      />
                     </div>
                   </div>
                 </div>
@@ -395,39 +401,38 @@ function Modal({ task, onUpdate, onClose, isAdding }) {
       index: task?.index,
     };
 
-    if(isAdding) {
+    if (isAdding) {
       axios
-      .post("http://localhost:3100/api/tasks", {
-        name: title,
-        description: description,
-        due_date: due,
-        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
-        priority,
-        assigned_to: assignedTo,
-        project_id: id,
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => console.error(err));
+        .post("http://localhost:3100/api/tasks", {
+          name: title,
+          description: description,
+          due_date: due,
+          status: status ? "TRUE" : "FALSE", // Where is `status` defined?
+          priority,
+          assigned_to: assignedTo,
+          project_id: id,
+        })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((err) => console.error(err));
     } else {
       axios
-      .put(`http://localhost:3100/api/tasks/${task.task_id}`, {
-        name: title,
-        description: description,
-        due_date: due,
-        status: status ? "TRUE" : "FALSE", // Where is `status` defined?
-        priority,
-        assigned_to: assignedTo,
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => console.error(err));
+        .put(`http://localhost:3100/api/tasks/${task.task_id}`, {
+          name: title,
+          description: description,
+          due_date: due,
+          status: status ? "TRUE" : "FALSE", // Where is `status` defined?
+          priority,
+          assigned_to: assignedTo,
+        })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((err) => console.error(err));
     }
 
     onUpdate(taskData);
-    
   };
 
   const [allUsers, setAllUsers] = useState([]);

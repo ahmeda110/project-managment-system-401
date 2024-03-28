@@ -13,6 +13,7 @@ import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const navigationItems = {
+    "Home": { icon: <BsChatRightFill size={16} style={{marginRight: "4px"}} />, link: "/home" },
     "All Projects": {
       icon: <PiProjectorScreenFill size={18} />,
       link: "/projects",
