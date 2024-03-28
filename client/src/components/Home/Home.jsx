@@ -1,13 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../SideBar/Sidebar";
 import Chart from "chart.js/auto";
 import "../../assets/styles/Home.css";
+import axios from "axios";
 
 function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
-  const tasksCompleted = 80;
-  const tasksUncompleted = 20;
-  const totalTasks = tasksCompleted + tasksUncompleted;
-  const totalProjects = 5;
+  const [stats, setStats] = useState({});
+  const [taskStatus, setTasksStatus] = useState({});
+  const [tasksPerMonth, setTasksPerMonth] = useState({});
+
+  const getStats = async () => {
+    const stats = await axios.get(
+      "http://localhost:3100/stats/project-task-member"
+    );
+    console.log("got stats", stats.data);
+    setStats(stats.data);
+  };
+
+  const getTaskStatus = async () => {
+    const taskStatus = await axios.get(
+      "http://localhost:3100/stats/task-status"
+    );
+    console.log("got task status", taskStatus.data);
+    setTasksStatus(taskStatus.data);
+  };
+
+  const getTasksPerMonth = async () => {
+    const tasksPerMonth = await axios.get(
+      "http://localhost:3100/tasks-per-month"
+    );
+    console.log("got tasks per month", tasksPerMonth.data);
+    setTasksPerMonth(tasksPerMonth.data);
+  };
+
+  useEffect(() => {
+    getStats();
+    getTaskStatus();
+    getTasksPerMonth();
+  }, []);
 
   const createCharts = () => {
     createDoughnutChart();
@@ -30,7 +60,10 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         datasets: [
           {
             label: "Tasks Overview",
-            data: [tasksCompleted, tasksUncompleted],
+            data: [
+              taskStatus?.tasksCompleted ?? 1,
+              taskStatus?.tasksUncompleted ?? 1,
+            ],
             backgroundColor: ["#36A2EB", "#FF6384"],
             borderWidth: 0,
           },
@@ -48,14 +81,21 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       existingChart.destroy();
     }
 
+    // console.log(
+    //   "tasksPerMonth keys:",
+    //   Object.keys(tasksPerMonth).reverse(),
+    //   "values:",
+    //   Object.values(tasksPerMonth).reverse()
+    // );
+
     new Chart(ctx, {
       type: "line",
       data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        labels: Object.keys(tasksPerMonth).reverse(),
         datasets: [
           {
             label: "Tasks Over Time",
-            data: [20, 30, 40, 50, 60, 70],
+            data: Object.values(tasksPerMonth).reverse(),
             borderColor: "#4CAF50",
             backgroundColor: "rgba(76, 175, 80, 0.1)",
             borderWidth: 2,
@@ -91,19 +131,23 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         </div>
         <div className="statistics">
           <div className="statistic">
-            <div className="value">{tasksCompleted}</div>
+            <div className="value">
+              {taskStatus?.completedTasks ?? "loading"}
+            </div>
             <div className="label">Tasks Completed</div>
           </div>
           <div className="statistic">
-            <div className="value">{tasksUncompleted}</div>
+            <div className="value">
+              {taskStatus?.uncompletedTasks ?? "loading"}
+            </div>
             <div className="label">Tasks Uncompleted</div>
           </div>
           <div className="statistic">
-            <div className="value">{totalTasks}</div>
+            <div className="value">{stats?.totalTasks ?? "loading"}</div>
             <div className="label">Total Tasks</div>
           </div>
           <div className="statistic">
-            <div className="value">{totalProjects}</div>
+            <div className="value">{stats?.totalProjects ?? "loading"}</div>
             <div className="label">Total Projects</div>
           </div>
         </div>
