@@ -67,7 +67,7 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   };
 
   const getprojectName = (id, setName) => {
-    console.log(id)
+    const projectName = localStorage.getItem('projectName')
     axios
       .get(`http://localhost:3100/api/project/name/${id}`)
       .then((result) => {
@@ -78,7 +78,12 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
         }
         return result.data;
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.log(err);
+        setProjectName(localStorage.getItem('projectName') + ": ");
+      });
+
+      
   };
 
   const [projectName, setProjectName] = useState("");

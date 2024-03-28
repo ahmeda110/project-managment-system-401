@@ -58,7 +58,9 @@ const Projects = ({
   };
 
   const handleProjectClick = (project) => {
-    console.log(project);
+    const nameP = project?.title;
+    localStorage.setItem("projectName", nameP);
+    console.log(project)
     navigate(`/tasks/${project.project_id || project.id}`);
   };
 
