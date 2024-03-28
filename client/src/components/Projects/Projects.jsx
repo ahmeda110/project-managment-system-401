@@ -59,7 +59,7 @@ const Projects = ({
 
   const handleProjectClick = (project) => {
     console.log(project);
-    navigate(`/tasks/${project.project_id}`);
+    navigate(`/tasks/${project.project_id || project.id}`);
   };
 
   const handleAddProjectClick = () => {
@@ -173,6 +173,8 @@ function ProjectModal({ project, onUpdate, onClose, isAdding }) {
         leader: "",
       })
       .then((result) => {
+        // window.location.reload();
+        // navigate("/projects")
         console.log(result);
       })
       .catch((err) => console.error(err));

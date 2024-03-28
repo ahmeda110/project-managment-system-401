@@ -66,8 +66,8 @@ function Account({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
       })
       .catch((err) => console.error(err));
 
-      // const event = new CustomEvent("usernameUpdated", { detail: newUsername });
-      // window.dispatchEvent(event);
+      const event = new CustomEvent("usernameUpdated", { detail: newUsername });
+      window.dispatchEvent(event);
 
       
     } catch (error) {

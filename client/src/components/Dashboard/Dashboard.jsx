@@ -67,11 +67,13 @@ function Dashboard({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   };
 
   const getprojectName = (id, setName) => {
+    console.log(id)
     axios
       .get(`http://localhost:3100/api/project/name/${id}`)
       .then((result) => {
         console.log(result.data);
         if (setName) {
+          console.log(result.data)
           setProjectName(result.data + ": ");
         }
         return result.data;

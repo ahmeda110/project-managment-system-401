@@ -127,7 +127,7 @@ app.get('/api/tasks/project/:projectId', async (req, res) => {
 app.get('/api/project/name/:projectId', async (req, res) => {
     try {
         const projectId = req.params.projectId;
-        const projectName = await projects.getProjectNameById(projectId);
+        const projectName = await projects.getProjectNameById(parseInt(projectId));
         console.log(projectName)
         res.json(projectName);
     } catch (error) {
