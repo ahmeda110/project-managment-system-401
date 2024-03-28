@@ -91,11 +91,11 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     new Chart(ctx, {
       type: "line",
       data: {
-        labels: Object.keys(tasksPerMonth).reverse(),
+        labels: tasksPerMonth ? Object.keys(tasksPerMonth).reverse() : [],
         datasets: [
           {
             label: "Tasks Over Time",
-            data: Object.values(tasksPerMonth).reverse(),
+            data: tasksPerMonth ? Object.values(tasksPerMonth).reverse() : [],
             borderColor: "#4CAF50",
             backgroundColor: "rgba(76, 175, 80, 0.1)",
             borderWidth: 2,
@@ -112,8 +112,12 @@ function Home({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
     });
   };
 
-  React.useEffect(() => {
-    createCharts();
+  useEffect(() => {
+    createLineChart();
+  }, [tasksPerMonth]);
+
+  useEffect(() => {
+    createDoughnutChart();
   }, []);
 
   return (
