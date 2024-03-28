@@ -64,6 +64,7 @@ function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   useEffect(() => {
     const fetchMemberData = async () => {
       try {
+        localStorage.removeItem("signout");
         const email = user.email;
         const emailResponse = await axios.get(`/api/members/email/${email}`);
         const memberId = emailResponse.data.memberId;
