@@ -8,12 +8,13 @@ import { PiProjectorScreenFill } from "react-icons/pi";
 import { FaCalendar } from "react-icons/fa";
 import { FaBorderAll } from "react-icons/fa6";
 import { BsChatRightFill } from "react-icons/bs";
+import { AiFillHome } from "react-icons/ai";
 
 import "../../assets/styles/Sidebar.css";
 
 function Sidebar({ activeTab, setActiveTab, activeSubTab, setActiveSubTab }) {
   const navigationItems = {
-    "Home": { icon: <BsChatRightFill size={16} style={{marginRight: "4px"}} />, link: "/home" },
+    "Home": { icon: <AiFillHome size={18} style={{marginRight: "4px"}} />, link: "/home" },
     "All Projects": {
       icon: <PiProjectorScreenFill size={18} />,
       link: "/projects",
